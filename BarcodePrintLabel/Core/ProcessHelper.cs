@@ -1,0 +1,26 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace BarcodePrintLabel.Core
+{
+    public static class ProcessHelper
+    {
+     
+        public static void KillCurrentProcess()
+        {
+            Environment.Exit(0);
+        }
+        public static bool CheckMuTexProcess()
+        {
+            if (System.Diagnostics.Process.GetProcessesByName(System.Diagnostics.Process.GetCurrentProcess().ProcessName).Length > 1)
+            {
+                return false;
+            }
+            else
+            { return true; }
+        }
+    }
+}

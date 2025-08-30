@@ -1,0 +1,49 @@
+﻿<UserControl x:Class="BarcodePrintLabel.Views.ModbusCommunicationView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:BarcodePrintLabel.Views" xmlns:viewmodels="clr-namespace:BarcodePrintLabel.ViewModels"
+             xmlns:local1="clr-namespace:BarcodePrintLabel.UIConverter"
+             mc:Ignorable="d"
+             AllowDrop="True" Visibility="{Binding IsVisible}">
+    <Grid Background="LightGray" Width="Auto" Height="Auto">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="35"></RowDefinition>
+            <RowDefinition  Height="35"></RowDefinition>
+            <RowDefinition  Height="35"></RowDefinition>
+
+        </Grid.RowDefinitions>
+        <Label Grid.Row="0" Content="PLC Communication" BorderBrush="Black" BorderThickness="1" Background="LightSkyBlue"></Label>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+
+            </Grid.ColumnDefinitions>
+
+            <Label Grid.Column="0" Content="{Binding ModbusIPAddress }" Background="{Binding ConectionStatus, Converter={StaticResource BoolToBrush}}"></Label>
+            <Button Grid.Column="1" x:Name="button_PLC_Connect" Content="{Binding ConnectOrDisConnectString }" Command="{Binding ConnectOrDisConnectToModbus}"></Button>
+        </Grid>
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="60"></ColumnDefinition>
+                <ColumnDefinition Width="70"></ColumnDefinition>
+                <ColumnDefinition Width="50"></ColumnDefinition>
+                <ColumnDefinition Width="50"></ColumnDefinition>
+                <ColumnDefinition Width="50"></ColumnDefinition>
+                <ColumnDefinition Width="50"></ColumnDefinition>
+
+            </Grid.ColumnDefinitions>
+            <Label Grid.Column="0" Content="Address" BorderBrush="Black" BorderThickness="1"></Label>
+            <TextBox Grid.Column="1" Text="{Binding ModbusMemoryAddress, Mode=OneWayToSource}"></TextBox>
+            <Label Grid.Column="2" Content="Value" BorderBrush="Black" BorderThickness="1"></Label>
+            <TextBox Grid.Column="3" Text="{Binding ModbusValue}"></TextBox>
+            <Button  Content ="Read" Grid.Column="4" Command="{Binding ReadModbusCommand}"></Button>
+            <Button  Content ="Write" Grid.Column="5" Command="{Binding WriteModbusCommand}"></Button>
+
+        </Grid>
+    </Grid>
+</UserControl>

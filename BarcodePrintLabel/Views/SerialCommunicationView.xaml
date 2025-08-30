@@ -1,0 +1,42 @@
+﻿<UserControl x:Class="BarcodePrintLabel.Views.SerialCommunicationView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:BarcodePrintLabel.Views"
+             mc:Ignorable="d" 
+             AllowDrop="True" Visibility="{Binding IsVisible}">
+    <Grid Background="LightGray" Width="Auto" Height="Auto">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="35"></RowDefinition>
+            <RowDefinition  Height="35"></RowDefinition>
+            <RowDefinition  Height="35"></RowDefinition>
+
+        </Grid.RowDefinitions>
+        <Label Grid.Row="0" Content="Printer Communication" BorderBrush="Black" BorderThickness="1" Background="LightSkyBlue"></Label>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1.5*"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+
+            </Grid.ColumnDefinitions>
+
+            <Label Grid.Column="0" Content="{Binding Comm }" Background="{Binding ConectionStatus, Converter={StaticResource BoolToBrush}}"></Label>
+            <Button Grid.Column="1" x:Name="button_PLC_Connect" Content="{Binding ConnectOrDisConnectString }" Command="{Binding ConnectOrDisConnect}"></Button>
+        </Grid>
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="50"></ColumnDefinition>
+                <ColumnDefinition Width="100"></ColumnDefinition>
+                <ColumnDefinition Width="50"></ColumnDefinition>
+                <ColumnDefinition Width="50"></ColumnDefinition>
+
+            </Grid.ColumnDefinitions>
+            <Label Grid.Column="0" Content="Value" BorderBrush="Black" BorderThickness="1"></Label>
+            <TextBox Grid.Column="1" Text="{Binding DataResult}"></TextBox>
+            <Button  Content ="Read" Grid.Column="2" Command="{Binding ReadCommand}"></Button>
+            <Button  Content ="Write" Grid.Column="3" Command="{Binding WriteCommand}"></Button>
+
+        </Grid>
+    </Grid>
+</UserControl>
