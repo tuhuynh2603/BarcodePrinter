@@ -12,21 +12,24 @@ namespace BarcodePrintLabel.Core.Communication
 {
     public class SerialCommunication
     {
-        SerialPort m_serialPort;
-        public ManualResetEvent m_SerialDataReceivedEvent = new ManualResetEvent(false);
+        public SerialPort m_serialPort;
+        public AutoResetEvent m_SerialDataReceivedEvent = new AutoResetEvent(false);
         public string strReadString { get; set; }
 
         private string _serialCom;
         private int _serialBaudRate;
+        public string SerialTitle;
 
-        public SerialCommunication(string strComm = "COM10", int nBaurate = 115200)
+        public SerialCommunication(string strComm = "COM10", int nBaurate = 115200, string serialTitle = "")
         {
             strReadString = "";
             _serialCom = strComm;
             _serialBaudRate = nBaurate;
+            SerialTitle = serialTitle;
             InitializeConnection();
             Thread ReadThread = new System.Threading.Thread(new System.Threading.ThreadStart(() => ReadThread_Fcn()));
             ReadThread.Start();
+            SerialTitle = serialTitle;
         }
 
         public string GetConnectionString()
@@ -99,9 +102,9 @@ namespace BarcodePrintLabel.Core.Communication
         {
             char read;
             string strTemp = "";
-            while (true)
+            while (this != null && m_serialPort != null)
             {
-                if (m_serialPort.IsOpen == false)
+                if (m_serialPort == null || m_serialPort.IsOpen == false)
                     continue;
 
                 try
@@ -114,17 +117,17 @@ namespace BarcodePrintLabel.Core.Communication
                             case '\r':
                                 break;
                             case '\n':
-                                if (strTemp.Length > 0)
+                                if (strTemp.Length <= 0)
                                 {
-                                    lock (strReadString)
-                                    {
-                                        strReadString = strTemp;
-                                        strTemp = "";
-                                        if (strReadString.Length > 0)
-                                            m_SerialDataReceivedEvent.Set();
-                                    }
+                                    continue;
                                 }
 
+                                lock (strReadString)
+                                {
+                                    strReadString = strTemp;
+                                    strTemp = "";
+                                }
+                                m_SerialDataReceivedEvent.Set();
 
                                 break;
                             default:

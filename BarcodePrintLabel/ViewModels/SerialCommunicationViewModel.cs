@@ -75,7 +75,7 @@ namespace BarcodePrintLabel.ViewModels
                 if (conectionStatus != value)
                 {
                     conectionStatus = value;
-                    OnPropertyChanged(nameof(ConectionStatus));
+                   OnPropertyChanged(nameof(ConectionStatus));
                 }
             }
         }
@@ -125,7 +125,22 @@ namespace BarcodePrintLabel.ViewModels
             }
         }
 
+        private string _SerialTitle = "Serial Comm";
 
+        public string SerialTitle
+        {
+            get => _SerialTitle;
+            set
+            {
+                if (_SerialTitle != value)
+                {
+                    _SerialTitle = value;
+                    OnPropertyChanged(nameof(SerialTitle));
+                }
+            }
+        }
+
+        
 
 
         private ActionCommand connectOrDisConnect;
@@ -164,6 +179,7 @@ namespace BarcodePrintLabel.ViewModels
         public SerialCommunicationViewModel(SerialCommunication serial)
         {
             _serialCommunication = serial;
+            SerialTitle = serial.SerialTitle;
             Comm = _serialCommunication.GetConnectionString();
             ConectionStatus = _serialCommunication.IsConnected();
             ConnectOrDisConnectString = ConectionStatus ? "Disconnect" : "Connect";

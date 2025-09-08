@@ -1,147 +1,187 @@
 ﻿using BarcodePrintLabel.Models;
 using ClosedXML.Excel;
+using DocumentFormat.OpenXml.Drawing.Charts;
+using DocumentFormat.OpenXml.Spreadsheet;
 using OfficeOpenXml;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Windows;
 
 namespace BarcodePrintLabel.Core.Services
 {
 
     public static class ExcelHelper
     {
-        public static List<TestResult> LoadFromExcel(string filePath)
+        public const string sheetName = "Results";
+
+        public static bool LoadFromExcel(string filePath, ref List<TestResult> results)
         {
-            var results = new List<TestResult>();
+            results = new List<TestResult>();
 
-            using (var workbook = new XLWorkbook(filePath))
+            try
             {
-                var ws = workbook.Worksheet("Results");
-                var rows = ws.RangeUsed().RowsUsed().Skip(1); // bỏ header
-
-                foreach (var row in rows)
+                if (!File.Exists(filePath))
                 {
-                    results.Add(new TestResult
+                    // Tạo file mới với sheet "Results" và header
+                    using (var workbook = new XLWorkbook())
                     {
-                        DateTime = row.Cell(1).GetString(),
-                        Mode = row.Cell(2).GetString(),
-                        RS_HM = row.Cell(3).GetString(),
-                        RS_VM = row.Cell(4).GetString(),
-                        LS_HM = row.Cell(5).GetString(),
-                        LS_VM = row.Cell(6).GetString(),
-                        Overall = row.Cell(7).GetString(),
-                        ErrorCode = row.Cell(8).GetString(),
-                        SerialNumber = row.Cell(9).GetString(),
-                        QRCode = row.Cell(10).GetString()
-                    });
-                }
-            }
+                        var ws = workbook.Worksheets.Add(sheetName);
 
-            return results;
+                        // tạo header (nếu cần)
+                        AddDataToRow(ws, 1, TestResult.CreateHeaderResult());
+                        
+                        workbook.SaveAs(filePath);
+                    }
+
+                    return true; // file mới tạo, chưa có dữ liệu
+                }
+
+                // Nếu file tồn tại thì đọc dữ liệu
+                string tempPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + ".xlsx");
+                File.Copy(filePath, tempPath, true);
+
+                using (var workbook = new XLWorkbook(tempPath))
+                {
+                    var ws = workbook.Worksheet(sheetName);
+                    var rows = ws.RangeUsed()?.RowsUsed().Skip(1); // bỏ header
+
+                    if (rows != null)
+                    {
+                        foreach (var row in rows)
+                        {
+                            var index = 1;
+                            results.Add(new TestResult
+                            {
+                                SerialNumber = row.Cell(1).GetString(),
+                                QRCode = row.Cell(2).GetString(),
+                                LS_HORIZONTAL = row.Cell(3).GetString(),
+                                LS_VERTICAL = row.Cell(4).GetString(),
+                                LS_HORIZONTAL2 = row.Cell(5).GetString(),
+                                LS_VERTICAL2 = row.Cell(6).GetString(),
+                                RS_HORIZONTAL = row.Cell(7).GetString(),
+                                RS_VERTICAL = row.Cell(8).GetString(),
+                                RS_HORIZONTAL2 = row.Cell(9).GetString(),
+                                RS_VERTICAL2 = row.Cell(10).GetString(),
+                                RESULT = row.Cell(11).GetString(),
+                                ERROR_CODE = row.Cell(12).GetString(),
+                                DateTime = row.Cell(13).GetString(),
+                            });
+                        }
+                    }
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
         }
 
         public static void SaveToExcel(string filePath, List<TestResult> results)
         {
             using (var workbook = new XLWorkbook())
             {
-                var ws = workbook.Worksheets.Add("Results");
+                var ws = workbook.Worksheets.Add(sheetName);
 
                 // Header
-                ws.Cell(1, 1).Value = "Timestamp";
-                ws.Cell(1, 2).Value = "Mode";
-                ws.Cell(1, 3).Value = "RS-HM";
-                ws.Cell(1, 4).Value = "RS-VM Result";
-                ws.Cell(1, 5).Value = "LS-HM";
-                ws.Cell(1, 6).Value = "LS-VM";
-                ws.Cell(1, 7).Value = "Overall";
-                ws.Cell(1, 8).Value = "Error Code";
-                ws.Cell(1, 9).Value = "Serial Number";
-                ws.Cell(1, 10).Value = "TCE QR";
-
+                AddDataToRow(ws, 1, TestResult.CreateHeaderResult());
                 // Data
-                int row = 2;
+                var row = 2;
                 foreach (var r in results)
                 {
-                    ws.Cell(row, 1).Value = r.DateTime;
-                    ws.Cell(row, 2).Value = r.Mode;
-                    ws.Cell(row, 3).Value = r.RS_HM;
-                    ws.Cell(row, 4).Value = r.RS_VM;
-                    ws.Cell(row, 5).Value = r.LS_HM;
-                    ws.Cell(row, 6).Value = r.LS_VM;
-                    ws.Cell(row, 7).Value = r.Overall;
-                    ws.Cell(row, 8).Value = r.ErrorCode;
-                    ws.Cell(row, 9).Value = r.SerialNumber;
-                    ws.Cell(row, 10).Value = r.QRCode;
-                    row++;
+                    AddDataToRow(ws, row++, r);
                 }
 
                 workbook.SaveAs(filePath);
             }
         }
 
-    public static void AppendToExcel(string filePath, TestResult newResult)
-    {
-            // Nếu file chưa tồn tại thì tạo mới
-        if (!File.Exists(filePath))
-         {
-            using (var workbook = new XLWorkbook())
+        private static void AddDataToRow(IXLWorksheet ws, int row, TestResult newResult)
+        {
+            var index = 1;
+
+            ws.Cell(row, index++).Value = newResult.SerialNumber;
+            ws.Cell(row, index++).Value = newResult.QRCode;
+            ws.Cell(row, index++).Value = newResult.LS_HORIZONTAL;
+            ws.Cell(row, index++).Value = newResult.LS_VERTICAL;
+            ws.Cell(row, index++).Value = newResult.LS_HORIZONTAL2;
+            ws.Cell(row, index++).Value = newResult.LS_VERTICAL2;
+            ws.Cell(row, index++).Value = newResult.RS_HORIZONTAL;
+            ws.Cell(row, index++).Value = newResult.RS_VERTICAL;
+            ws.Cell(row, index++).Value = newResult.RS_HORIZONTAL2;
+            ws.Cell(row, index++).Value = newResult.RS_VERTICAL2;
+            ws.Cell(row, index++).Value = newResult.RESULT;
+            ws.Cell(row, index++).Value = newResult.ERROR_CODE;
+            ws.Cell(row, index++).Value = newResult.DateTime;
+        }
+
+        public static void AppendToExcel(string filePath, TestResult newResult)
+        {
+
+                // Nếu file chưa tồn tại thì tạo mới
+                if (!File.Exists(filePath))
+             {
+                using (var workbook = new XLWorkbook())
+                {
+                    var ws = workbook.Worksheets.Add(sheetName);
+
+                    // Tạo header
+                    AddDataToRow(ws, 1, TestResult.CreateHeaderResult());
+                    // Ghi dòng dữ liệu đầu tiên
+                    AddDataToRow(ws, 2, newResult);
+
+                    workbook.SaveAs(filePath);
+                }
+            }
+            else
             {
-                var ws = workbook.Worksheets.Add("Results");
+                if (IsFileLocked(filePath))
+                {
+                    // Cách 1: Báo user
+                    MessageBox.Show("File Excel đang mở, vui lòng đóng lại rồi thử lại.", "Warning",
+                                    MessageBoxButton.OK, MessageBoxImage.Warning);
 
-                // Tạo header
-                ws.Cell(1, 1).Value = "Timestamp";
-                ws.Cell(1, 2).Value = "Mode";
-                ws.Cell(1, 3).Value = "RS-HM";
-                ws.Cell(1, 4).Value = "RS-VM Result";
-                ws.Cell(1, 5).Value = "LS-HM";
-                ws.Cell(1, 6).Value = "LS-VM";
-                ws.Cell(1, 7).Value = "Overall";
-                ws.Cell(1, 8).Value = "Error Code";
-                ws.Cell(1, 9).Value = "Serial Number";
-                ws.Cell(1, 10).Value = "TCE QR";
+                    // Cách 2 (tuỳ bạn): lưu sang file khác
+                    // string backupPath = Path.Combine(Path.GetDirectoryName(filePath)!,
+                    //     Path.GetFileNameWithoutExtension(filePath) + "_backup.xlsx");
+                    // workbook.SaveAs(backupPath);
+                    return;
+                }
+                // Nếu file đã có → mở ra và thêm dòng mới
+                using (var workbook = new XLWorkbook(filePath))
+                {
+                    var ws = workbook.Worksheet(sheetName);
 
-                // Ghi dòng dữ liệu đầu tiên
-                ws.Cell(2, 1).Value = newResult.DateTime;
-                ws.Cell(2, 2).Value = newResult.Mode;
-                ws.Cell(2, 3).Value = newResult.RS_HM;
-                ws.Cell(2, 4).Value = newResult.RS_VM;
-                ws.Cell(2, 5).Value = newResult.LS_HM;
-                ws.Cell(2, 6).Value = newResult.LS_VM;
-                ws.Cell(2, 7).Value = newResult.Overall;
-                ws.Cell(2, 8).Value = newResult.ErrorCode;
-                ws.Cell(2, 9).Value = newResult.SerialNumber;
-                ws.Cell(2, 10).Value = newResult.QRCode;
-
-                workbook.SaveAs(filePath);
+                    // Tìm dòng cuối cùng có dữ liệu
+                    var lastRow = ws.LastRowUsed().RowNumber();
+                        // Ghi dữ liệu vào dòng kế tiếp
+                    AddDataToRow(ws, lastRow + 1, newResult);
+                    workbook.Save();
+                }
             }
         }
-        else
+
+        private static bool IsFileLocked(string path)
         {
-            // Nếu file đã có → mở ra và thêm dòng mới
-            using (var workbook = new XLWorkbook(filePath))
+            FileStream stream = null;
+            try
             {
-                var ws = workbook.Worksheet("Results");
-
-                // Tìm dòng cuối cùng có dữ liệu
-                int lastRow = ws.LastRowUsed().RowNumber();
-
-                // Ghi dữ liệu vào dòng kế tiếp
-                int newRow = lastRow + 1;
-                ws.Cell(newRow, 1).Value = newResult.DateTime;
-                ws.Cell(newRow, 2).Value = newResult.Mode;
-                ws.Cell(newRow, 3).Value = newResult.RS_HM;
-                ws.Cell(newRow, 4).Value = newResult.RS_VM;
-                ws.Cell(newRow, 5).Value = newResult.LS_HM;
-                ws.Cell(newRow, 6).Value = newResult.LS_VM;
-                ws.Cell(newRow, 7).Value = newResult.Overall;
-                ws.Cell(newRow, 8).Value = newResult.ErrorCode;
-                ws.Cell(newRow, 9).Value = newResult.SerialNumber;
-                ws.Cell(newRow, 10).Value = newResult.QRCode;
-
-                workbook.Save();
+                stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
+                return false;
+            }
+            catch (IOException)
+            {
+                return true; // file bị lock
+            }
+            finally
+            {
+                stream?.Close();
             }
         }
     }
-}
 }

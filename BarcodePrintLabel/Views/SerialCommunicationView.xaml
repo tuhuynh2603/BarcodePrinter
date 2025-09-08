@@ -13,7 +13,7 @@
             <RowDefinition  Height="35"></RowDefinition>
 
         </Grid.RowDefinitions>
-        <Label Grid.Row="0" Content="Printer Communication" BorderBrush="Black" BorderThickness="1" Background="LightSkyBlue"></Label>
+        <Label Grid.Row="0" Content="{Binding SerialTitle}" BorderBrush="Black" BorderThickness="1" Background="LightSkyBlue"></Label>
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1.5*"></ColumnDefinition>

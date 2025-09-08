@@ -11,11 +11,12 @@ namespace BarcodePrintLabel.ConstantAndEnum
         ManualMode = 0,
         AutoMode = 1
     }
-    public enum PLC_ADDRESS
+    public enum PLC_ADDRESS : int
     {
-        PLC_SCANOK = 104,
-        PLC_TESTRESULT = 105,
-        PLC_AUTO_MANUAL_MODE = 106,
-        PLC_BYPASS = 107
+        //PLC_BYPASS = 100,
+        APP_EVENT = 110,
+        APP_SCAN_RESULT = 1
+        //PLC_AUTO_MANUAL_MODE = 106,
+         
     }
 }

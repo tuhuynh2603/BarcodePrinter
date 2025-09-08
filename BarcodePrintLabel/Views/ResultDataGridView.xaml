@@ -6,22 +6,70 @@
              xmlns:local="clr-namespace:BarcodePrintLabel.Views"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <!-- DataGrid -->
-        <DataGrid ItemsSource="{Binding Results}" 
-                  AutoGenerateColumns="False" 
-                  CanUserAddRows="False" 
-                  Height="300">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Ô search -->
+        <Grid Grid.Row="0"  Background="LightSlateGray">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel  Grid.Column="0"  Orientation="Horizontal" Background="LightSlateGray">
+                <Label Margin="5" FontSize="20" >Scanner Data</Label>
+                <TextBlock
+                Width="auto"
+                FontSize="20"
+                MinWidth="200"
+                Background="AliceBlue"
+                 Margin="5,5, 50,5"
+                 Text="{Binding ScannerData, UpdateSourceTrigger=PropertyChanged}"/>
+            </StackPanel>
+
+            <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Margin="5" FontSize="20" Command="{Binding SearchCommand}">Search</Button>
+                <TextBox
+                Width="auto"
+                MinWidth="200"
+                Background="AliceBlue"
+                 Margin="5"
+                 FontSize="20"
+                 Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"/>
+
+                <Button Content="Export to Excel"
+                Width="auto" Margin="5"
+            Command="{Binding ExportToExcelCommand}" />
+            </StackPanel>
+        </Grid>
+
+
+        <!-- DataGrid -->
+        <DataGrid Grid.Row="1"
+                  ItemsSource="{Binding ResultsView}"
+                  SelectedItem="{Binding SelectedResult, Mode=TwoWay}"
+                  AutoGenerateColumns="False"
+                  CanUserAddRows="False"
+                  FrozenColumnCount="10"
+                  IsReadOnly="True">
 
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Serial Number" Binding="{Binding SerialNumber}" Width="*"/>
-                <DataGridTextColumn Header="RS-HM" Binding="{Binding RS_HM}" Width="*"/>
-                <DataGridTextColumn Header="RS-VM" Binding="{Binding RS_VM}" Width="*"/>
-                <DataGridTextColumn Header="LS-HM" Binding="{Binding LS_HM}" Width="*"/>
-                <DataGridTextColumn Header="LS-VM" Binding="{Binding LS_VM}" Width="*"/>
-                <DataGridTextColumn Header="Overall" Binding="{Binding Overall}" Width="*"/>
-                <DataGridTextColumn Header="Error Code" Binding="{Binding ErrorCode}" Width="*"/>
-                <DataGridTextColumn Header="DateTime" Binding="{Binding DateTime}" Width="*"/>
                 <DataGridTextColumn Header="QRCode" Binding="{Binding QRCode}" Width="*"/>
+                <DataGridTextColumn Header="RS-HM" Binding="{Binding LS_HORIZONTAL}" Width="*"/>
+                <DataGridTextColumn Header="RS-VM" Binding="{Binding LS_VERTICAL}" Width="*"/>
+                <DataGridTextColumn Header="LS-HM" Binding="{Binding LS_HORIZONTAL2}" Width="*"/>
+                <DataGridTextColumn Header="LS-VM" Binding="{Binding LS_VERTICAL2}" Width="*"/>
+                <DataGridTextColumn Header="RS-HM 2" Binding="{Binding RS_HORIZONTAL}" Width="*"/>
+                <DataGridTextColumn Header="RS-VM 2" Binding="{Binding RS_VERTICAL}" Width="*"/>
+                <DataGridTextColumn Header="LS-HM 2" Binding="{Binding RS_HORIZONTAL2}" Width="*"/>
+                <DataGridTextColumn Header="LS-VM 2" Binding="{Binding RS_VERTICAL2}" Width="*"/>
+                <DataGridTextColumn Header="Overall" Binding="{Binding RESULT}" Width="*"/>
+                <DataGridTextColumn Header="Error Code" Binding="{Binding ERROR_CODE}" Width="*"/>
+                <DataGridTextColumn Header="DateTime" Binding="{Binding DateTime}" Width="*"/>
             </DataGrid.Columns>
         </DataGrid>
+    </Grid>
 </UserControl>

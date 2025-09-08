@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace BarcodePrintLabel.Core
 {
@@ -70,6 +71,9 @@ namespace BarcodePrintLabel.Core
 
         public int ReadPLCRegister(int nAddress)
         {
+            if (m_modbusClient == null)
+                return -1;
+
             lock (m_modbusClient)
             {
                 int brepeat = 0;
@@ -78,9 +82,9 @@ namespace BarcodePrintLabel.Core
                 if (m_modbusClient.Connected)
                     try
                     {
-                        int[] a = new int[10];
+                        int[] a = new int[16];
 
-                        a = m_modbusClient.ReadHoldingRegisters(nAddress, 5);
+                        a = m_modbusClient.ReadHoldingRegisters(nAddress, a.Count());
 
                         return a[0];
                     }
@@ -98,15 +102,60 @@ namespace BarcodePrintLabel.Core
                         }
                         catch
                         {
-                            goto RetryRead;
                         }
-                        int a = m_modbusClient.ConnectionTimeout;
 
                         goto RetryRead;
                     }
 
                 else
+                {
                     return -1;
+                }
+            }
+        }
+
+        public int[] ReadPLCMultiRegister(int nAddress, int quantity = 16)
+        {
+            lock (m_modbusClient)
+            {
+                 var data = new int[quantity];
+                var failedData = data.Select(s => -1).ToArray();
+
+                int brepeat = 0;
+                RetryRead:
+                Thread.Sleep(10);
+                if (m_modbusClient.Connected)
+                {
+                    try
+                    {
+                        data = m_modbusClient.ReadHoldingRegisters(nAddress, quantity);
+                        return data;
+                    }
+
+                    catch
+                    {
+                        brepeat++;
+                        Thread.Sleep(10);
+                        if (brepeat > 10)
+                            return failedData;
+                        try
+                        {
+                            m_modbusClient.Disconnect();
+                            m_modbusClient.Connect();
+                        }
+                        catch
+                        {
+                            goto RetryRead;
+                        }
+
+                        goto RetryRead;
+                    }
+                }
+                else
+                {
+                    //MessageBox.Show("PLC Disconnected. Please check the connection.", "Connection Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return failedData;
+                }
             }
         }
 
@@ -140,13 +189,14 @@ namespace BarcodePrintLabel.Core
                             goto RetryWrite;
                         }
 
-                        int a = m_modbusClient.ConnectionTimeout;
-
                         goto RetryWrite;
                     }
                 }
                 else
+                {
+                    //MessageBox.Show("PLC Disconnected. Please check the connection.", "Connection Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     return -1;
+                }
                 return 0;
             }
         }
@@ -183,13 +233,14 @@ namespace BarcodePrintLabel.Core
                             goto RetryWrite;
                         }
 
-                        int a = m_modbusClient.ConnectionTimeout;
-
                         goto RetryWrite;
                     }
                 }
                 else
+                {
+                    //MessageBox.Show("PLC Disconnected. Please check the connection.", "Connection Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     return -1;
+                }
                 return 0;
             }
         }

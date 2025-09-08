@@ -1,10 +1,12 @@
 ﻿using BarcodePrintLabel.Core;
 using BarcodePrintLabel.Core.Commands;
+using BarcodePrintLabel.Core.Services;
 using Microsoft.Xaml.Behaviors.Core;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Net;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
@@ -70,7 +72,13 @@ namespace BarcodePrintLabel.ViewModels
             try
             {
                 memoryAddress = Convert.ToInt32(ModbusMemoryAddress);
-                modbusValue = _modbusCommunication.ReadPLCRegister(memoryAddress).ToString();
+
+                var modbusValueTemp = "";
+                foreach ( var data in _modbusCommunication.ReadPLCMultiRegister(memoryAddress).Select(s => s.ToString()))
+                {
+                    modbusValueTemp += data;
+                }
+                modbusValue = modbusValueTemp;
             }
             catch (Exception ex)
             {
@@ -120,7 +128,7 @@ namespace BarcodePrintLabel.ViewModels
                 if (conectionStatus != value)
                 {
                     conectionStatus = value;
-                    OnPropertyChanged(nameof(ConectionStatus));
+                   OnPropertyChanged(nameof(ConectionStatus));
                 }
             }
         }
@@ -203,7 +211,7 @@ namespace BarcodePrintLabel.ViewModels
 
         }
 
-        private ModbusCommunication _modbusCommunication { get; set; }
+        public ModbusCommunication _modbusCommunication { get; set; }
 
         public ModbusCommunicationViewModel( ModbusCommunication modbusCommunication)
         {
@@ -216,7 +224,6 @@ namespace BarcodePrintLabel.ViewModels
         public void OpenModbusDialog(bool isOpenModbusDialog)
         {
            IsVisible = isOpenModbusDialog ? Visibility.Visible :Visibility.Collapsed;
-
         }
     }
 }

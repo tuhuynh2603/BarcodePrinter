@@ -4,35 +4,75 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:BarcodePrintLabel.Views"
-             mc:Ignorable="d">
+             mc:Ignorable="d"
+             Background="SteelBlue">
+    
+    
     <!-- Khu scan input -->
-    <Grid>
+    <Grid Background="SlateGray">
+
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
 
-        <StackPanel Orientation="Horizontal" Margin="10" HorizontalAlignment="Left" Grid.Column="0">
-            <ToggleButton Content="Manual"
-                IsChecked="{Binding IsManualMode, Mode=TwoWay}"
-                Margin="10,0,0,0"/>
-            <ToggleButton Content="Auto"
-                IsChecked="{Binding IsAutoMode, Mode=TwoWay}"
-                Margin="10,0,0,0"/>
-            <ToggleButton Content="PLC Comm"
+
+        <StackPanel Orientation="Horizontal" 
+                                            IsEnabled="True" 
+                                            Name="tabVisionView">
+            <RibbonGroup Height="80" HorizontalAlignment="Left" Grid.Column="0">
+                <RibbonGroup.Style>
+                    <Style TargetType="RibbonGroup">
+                        <Setter Property="FontSize" Value="12"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Path=IsUseSmallIcon, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Value="True">
+                                <Setter Property="FontSize" Value="11"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </RibbonGroup.Style>
+                <RibbonGroup.Header>
+                    <TextBlock Text=""
+                        FontFamily="Microsoft New Tai Lue"
+                        Foreground="#FFD6F9FF" FontSize="13"
+                        FontWeight="Bold">
+                        <TextBlock.Effect>
+                            <BlurEffect Radius="0.1"/>
+                        </TextBlock.Effect>
+                    </TextBlock>
+                </RibbonGroup.Header>
+                <RibbonToggleButton Label="PLC-Comm"
                 IsChecked="{Binding IsOpenModbusDialog, Mode=TwoWay}"
-                Margin="10,0,0,0"/>
-            <ToggleButton Content="Printer Comm"
+                                LargeImageSource="\..\Resources\network.png"
+                MouseOverBackground="{StaticResource MouseOverButtonStyle}"
+                Foreground="GhostWhite"
+                CheckedBackground="{StaticResource CheckedButtonStyle}"
+                Width="200"/>
+                <RibbonToggleButton Label="Printer-Comm"
                 IsChecked="{Binding IsOpenPrinterCommunicationDialog, Mode=TwoWay}"
-                Margin="10,0,0,0"/>
-            <ToggleButton Content="Scanner Comm"
+                                LargeImageSource="\..\Resources\printer-custom.png"
+                MouseOverBackground="{StaticResource MouseOverButtonStyle}"
+                Foreground="GhostWhite"
+                CheckedBackground="{StaticResource CheckedButtonStyle}"
+                Width="100"/>
+                <RibbonToggleButton Label="Scanner-Comm"
                 IsChecked="{Binding IsOpenScannerCommunicationDialog, Mode=TwoWay}"
-                Margin="10,0,0,0"/>
+                                LargeImageSource="\..\Resources\qrcode-scan-custom.png"
+                MouseOverBackground="{StaticResource MouseOverButtonStyle}"
+                Foreground="GhostWhite"
+                CheckedBackground="{StaticResource CheckedButtonStyle}"
+                Width="100"/>
+            </RibbonGroup>
+
         </StackPanel>
 
-        <ToggleButton Content="Bypass"
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button
                       HorizontalAlignment="Right"
-                      IsChecked="{Binding IsBypass, Mode=TwoWay}"
-                      Width="100" Grid.Column="1"/>
+                      Command="{Binding PrintLabelCommand}"
+                      Width="100" Grid.Column="1">
+                <Image Source ="\..\Resources\printer-custom.png" ></Image>
+            </Button>
+        </StackPanel>
     </Grid>
 </UserControl>

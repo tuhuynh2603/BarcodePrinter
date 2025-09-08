@@ -19,17 +19,35 @@ namespace BarcodePrintLabel.Core
         public static string[] m_strCurrentDeviceID_Registry = { "Current Device ID 1", "Current Device ID 2" };
         public const string pathRegistry = "Software\\HD Company\\Printer Label Application";
         public string pathStatistics;
+        public string defaultExcelFile = "data.xlsx";
 
         public string m_ScannerCom;
         public int m_ScannerBauRate;
         public string m_PrinterCom;
+        public int m_PLCEventCount;
+        public int m_DefaultScanDataLength;
+        public int m_DefaultPLCResultLength;
+
+
         public int m_PrinterBauRate;
         public string m_PLCIPAddress;
         public int m_PLCPort;
 
         private RegistryKey register = Registry.CurrentUser.CreateSubKey(pathRegistry, true);
 
-        public PrinterApplication()
+
+    public static void AddToStartup()
+    {
+        string appName = "PrinterBarcodeApplication";
+        string exePath = Assembly.GetExecutingAssembly().Location;
+
+        RegistryKey key = Registry.CurrentUser.OpenSubKey(
+            @"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true);
+
+        key.SetValue(appName, exePath);
+    }
+
+    public PrinterApplication()
         {
             if (!ProcessHelper.CheckMuTexProcess())
             {
@@ -37,13 +55,12 @@ namespace BarcodePrintLabel.Core
                 ProcessHelper.KillCurrentProcess();
             }
 
-            RegistryKey reg = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
-            reg.SetValue("HD Printer Label Application", ToString());
+            AddToStartup();
 
             LoadRegistry();
         }
 
-        private string GetStringRegistry(string strKey, string strDefault)
+        public string GetStringRegistry(string strKey, string strDefault)
         {
             string strTemp = "";
 
@@ -58,6 +75,12 @@ namespace BarcodePrintLabel.Core
             return strTemp;
         }
 
+        public string PLCEventCountRegistryKey = "PLC Event Count";
+        public void SetDataToRegistry(string strKey, string value)
+        {
+            register.SetValue(strKey, value);
+        }
+
         public void LoadRegistry()
         {
             #region Load Folder Lot Result Image
@@ -67,6 +90,13 @@ namespace BarcodePrintLabel.Core
 
             m_PrinterCom = GetStringRegistry("Printer Comm", "Com2");
             int.TryParse(GetStringRegistry("Printer Baurate", "9600"), out m_PrinterBauRate);
+
+            int.TryParse(GetStringRegistry(PLCEventCountRegistryKey, "0"), out m_PLCEventCount);
+            int.TryParse(GetStringRegistry(PLCEventCountRegistryKey, "0"), out m_PLCEventCount);
+
+            int.TryParse(GetStringRegistry("Scan Data Length", "0"), out m_DefaultScanDataLength);
+            int.TryParse(GetStringRegistry("PLC Result Length", "0"), out m_DefaultPLCResultLength);
+
 
             m_PLCIPAddress = GetStringRegistry("PLC IP Address", "192.168.10.1");
             int.TryParse(GetStringRegistry("PLC Port", "3000"), out m_PLCPort);

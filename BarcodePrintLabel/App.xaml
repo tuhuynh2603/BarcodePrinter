@@ -5,10 +5,16 @@
              xmlns:converter="clr-namespace:BarcodePrintLabel.UIConverter"
              StartupUri="Views/MainWindow.xaml">
     <Application.Resources>
-        <converter:BoolToBrushConverter x:Key="BoolToBrush"
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Views/Ribbon.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+            <converter:BoolToBrushConverter x:Key="BoolToBrush"
                                     TrueBrush="Green"
                                     FalseBrush="Red"
                                     Invert="False"/>
+        </ResourceDictionary>
     </Application.Resources>
 
 </Application>
