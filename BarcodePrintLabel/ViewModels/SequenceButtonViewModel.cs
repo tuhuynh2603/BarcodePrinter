@@ -127,46 +127,51 @@ namespace BarcodePrintLabel.ViewModels
             get => _isOpenModbusDialog;
             set
             {
+                _isOpenModbusDialog = value = true;
+               
                 if (_isOpenModbusDialog != value)
                 {
                     _isOpenModbusDialog = value;
                     OnPropertyChanged(nameof(IsOpenModbusDialog));
                 }
 
-                if(_mainViewModel.modbusCommunicationVM != null)
-                    _mainViewModel.modbusCommunicationVM.OpenModbusDialog(_isOpenModbusDialog);
+                //if(_mainViewModel.modbusCommunicationVM != null)
+                //    _mainViewModel.modbusCommunicationVM.OpenModbusDialog(_isOpenModbusDialog);
 
-                //if(_isOpenModbusDialog)
+                //if (_isOpenModbusDialog)
                 //{
 
-                //        if (_mainViewModel.threadManager.thread_TestSequence == null)
-                //        {
+                //    if (_mainViewModel.threadManager.thread_TestSequence == null)
+                //    {
                 //        _mainViewModel.threadManager.thread_TestSequence = new Thread(() => _mainViewModel.hardwareIO.ReadPLCIOTest());
                 //        _mainViewModel.threadManager.thread_TestSequence.Start();
-                //        }
-                //        else if (!_mainViewModel.threadManager.thread_TestSequence.IsAlive)
-                //        {
+                //    }
+                //    else if (!_mainViewModel.threadManager.thread_TestSequence.IsAlive)
+                //    {
                 //        _mainViewModel.threadManager.thread_TestSequence = new Thread(() => _mainViewModel.hardwareIO.ReadPLCIOTest());
                 //        _mainViewModel.threadManager.thread_TestSequence.Start();
-                //        }
+                //    }
                 //}
             }
         }
 
-        private bool _isOpenPrinterCommunicationDialog { get; set; }
+        private bool _isOpenPrinterCommunicationDialog { get; set; } = true;
         public bool IsOpenPrinterCommunicationDialog
         {
             get => _isOpenPrinterCommunicationDialog;
             set
             {
+                //if(_mainViewModel.application.IsEngineerMode == 1)
+
+                _isOpenModbusDialog = value = true;
                 if (_isOpenPrinterCommunicationDialog != value)
                 {
                     _isOpenPrinterCommunicationDialog = value;
                     OnPropertyChanged(nameof(IsOpenPrinterCommunicationDialog));
                 }
 
-                if (_mainViewModel.printerSerialCommunicationViewModel != null)
-                    _mainViewModel.printerSerialCommunicationViewModel.OpenSerialDialog(_isOpenPrinterCommunicationDialog);
+                //if (_mainViewModel.printerSerialCommunicationViewModel != null)
+                //    _mainViewModel.printerSerialCommunicationViewModel.OpenSerialDialog(_isOpenPrinterCommunicationDialog);
             }
         }
 
@@ -176,14 +181,15 @@ namespace BarcodePrintLabel.ViewModels
             get => _isOpenScannerCommunicationDialog;
             set
             {
+                _isOpenModbusDialog = value = true;
                 if (_isOpenScannerCommunicationDialog != value)
                 {
                     _isOpenScannerCommunicationDialog = value;
                     OnPropertyChanged(nameof(IsOpenScannerCommunicationDialog));
                 }
 
-                if (_mainViewModel.scanSerialCommunicationViewModel != null)
-                    _mainViewModel.scanSerialCommunicationViewModel.OpenSerialDialog(_isOpenScannerCommunicationDialog);
+                //if (_mainViewModel.scanSerialCommunicationViewModel != null)
+                //    _mainViewModel.scanSerialCommunicationViewModel.OpenSerialDialog(_isOpenScannerCommunicationDialog);
             }
         }
 

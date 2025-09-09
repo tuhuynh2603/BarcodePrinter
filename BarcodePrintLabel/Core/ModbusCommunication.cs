@@ -1,34 +1,23 @@
-﻿using EasyModbus;
+﻿using NModbus;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows;
+using System.Net.Sockets;
 
 namespace BarcodePrintLabel.Core
 {
     public class ModbusCommunication
     {
-        public ModbusClient m_modbusClient;
         private string _strCommAddress = "127.0.0.1";
-        private int _pLCPort  = 502;
-        public const string DisconnectedString = "Disconnected";
+        private int _pLCPort = 502;
+
+        public TcpClient m_modbusClient;
+        private IModbusMaster _master;
+
         public ModbusCommunication(string pLCIPAddress, int pLCPort)
         {
             _strCommAddress = pLCIPAddress;
             _pLCPort = pLCPort;
-            m_modbusClient = new ModbusClient(_strCommAddress, _pLCPort);
-            m_modbusClient.ConnectionTimeout = 2000;
-            try
-            {
-                m_modbusClient.Connect();
-            }
-            catch (Exception e)
-            {
-                // Handle connection error if necessary
-            }
+            Connect();
         }
 
         public string GetConnectionString()
@@ -38,15 +27,14 @@ namespace BarcodePrintLabel.Core
 
         public bool IsConnected()
         {
-            return m_modbusClient.Connected;
+            return m_modbusClient != null && m_modbusClient.Connected;
         }
 
         public void Disconnect()
         {
-            if (m_modbusClient.Connected)
-            {
-                m_modbusClient.Disconnect();
-            }
+            m_modbusClient?.Close();
+            m_modbusClient = null;
+            _master = null;
         }
 
         public void Connect(string pLCIPAddress = "", int pLCPort = 502)
@@ -57,192 +45,88 @@ namespace BarcodePrintLabel.Core
                 _pLCPort = pLCPort;
             }
 
-            if (!m_modbusClient.Connected)
+            try
+            {
+                m_modbusClient = new TcpClient(_strCommAddress, _pLCPort);
+                var factory = new ModbusFactory();
+                _master = factory.CreateMaster(m_modbusClient);
+            }
+            catch (Exception)
+            {
+                // handle error
+            }
+        }
+
+        public int ReadPLCRegister(byte slaveId, int address)
+        {
+            if (_master == null) return -1;
+
+            lock (_master)
             {
                 try
                 {
-                    m_modbusClient.Connect(_strCommAddress, _pLCPort);
+                    ushort[] registers = _master.ReadHoldingRegisters(slaveId, ConvertIntToUShort(address), 1);
+                    return registers[0];
                 }
-                catch (Exception e)
-                {
-                }
-            }
-        }
-
-        public int ReadPLCRegister(int nAddress)
-        {
-            if (m_modbusClient == null)
-                return -1;
-
-            lock (m_modbusClient)
-            {
-                int brepeat = 0;
-                RetryRead:
-                Thread.Sleep(10);
-                if (m_modbusClient.Connected)
-                    try
-                    {
-                        int[] a = new int[16];
-
-                        a = m_modbusClient.ReadHoldingRegisters(nAddress, a.Count());
-
-                        return a[0];
-                    }
-
-                    catch
-                    {
-                        brepeat++;
-                        Thread.Sleep(10);
-                        if (brepeat > 10)
-                            return -1;
-                        try
-                        {
-                            m_modbusClient.Disconnect();
-                            m_modbusClient.Connect();
-                        }
-                        catch
-                        {
-                        }
-
-                        goto RetryRead;
-                    }
-
-                else
+                catch
                 {
                     return -1;
                 }
             }
         }
 
-        public int[] ReadPLCMultiRegister(int nAddress, int quantity = 16)
+       private static ushort ConvertIntToUShort(int value)
         {
-            lock (m_modbusClient)
+            if (value < ushort.MinValue || value > ushort.MaxValue)
             {
-                 var data = new int[quantity];
-                var failedData = data.Select(s => -1).ToArray();
+                throw new ArgumentOutOfRangeException($"Giá trị {value} không nằm trong khoảng của ushort.");
+            }
 
-                int brepeat = 0;
-                RetryRead:
-                Thread.Sleep(10);
-                if (m_modbusClient.Connected)
+            ushort result = (ushort)value;
+            return result;
+        }
+
+        public int[] ReadPLCMultiRegister(byte slaveId, int startAddress, int quantity = 16)
+        {
+
+            if (_master == null) return Enumerable.Repeat(-1, quantity).ToArray();
+
+            lock (_master)
+            {
+                try
                 {
-                    try
-                    {
-                        data = m_modbusClient.ReadHoldingRegisters(nAddress, quantity);
-                        return data;
-                    }
-
-                    catch
-                    {
-                        brepeat++;
-                        Thread.Sleep(10);
-                        if (brepeat > 10)
-                            return failedData;
-                        try
-                        {
-                            m_modbusClient.Disconnect();
-                            m_modbusClient.Connect();
-                        }
-                        catch
-                        {
-                            goto RetryRead;
-                        }
-
-                        goto RetryRead;
-                    }
+                    ushort[] registers = _master.ReadHoldingRegisters(slaveId, ConvertIntToUShort(startAddress), ConvertIntToUShort(quantity));
+                    return registers.Select(r => (int)r).ToArray();
                 }
-                else
+                catch
                 {
-                    //MessageBox.Show("PLC Disconnected. Please check the connection.", "Connection Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return failedData;
+                    return Enumerable.Repeat(-1, quantity).ToArray();
                 }
             }
         }
 
-        public int WritePLCMultiRegister(int nAddress, int[] ival)
+        public int WritePLCMultiRegister(byte slaveId, int startAddress, int[] values)
         {
-            lock (m_modbusClient)
-            {
-                int brepeat = 0;
-                RetryWrite:
-                Thread.Sleep(10);
-                if (m_modbusClient.Connected)
-                {
-                    try
-                    {
-                        m_modbusClient.WriteMultipleRegisters(nAddress, ival);
-                        Thread.Sleep(10);
-                    }
-                    catch (Exception e)
-                    {
-                        brepeat++;
-                        Thread.Sleep(10);
-                        if (brepeat > 10)
-                            return -1;
-                        try
-                        {
-                            m_modbusClient.Disconnect();
-                            m_modbusClient.Connect();
-                        }
-                        catch
-                        {
-                            goto RetryWrite;
-                        }
+            if (_master == null) return -1;
 
-                        goto RetryWrite;
-                    }
-                }
-                else
+            lock (_master)
+            {
+                try
                 {
-                    //MessageBox.Show("PLC Disconnected. Please check the connection.", "Connection Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    ushort[] ushortVals = values.Select(v => (ushort)v).ToArray();
+                    _master.WriteMultipleRegisters(slaveId, ConvertIntToUShort(startAddress), ushortVals);
+                    return 0;
+                }
+                catch
+                {
                     return -1;
                 }
-                return 0;
             }
         }
 
-        public int WritePLCRegister(int nAddress, int nValue)
+        public int WritePLCRegister(byte slaveId, int address, int value)
         {
-            lock (m_modbusClient)
-            {
-                int[] ival = new int[1];
-                ival[0] = nValue;
-                int brepeat = 0;
-                RetryWrite:
-                Thread.Sleep(10);
-                if (m_modbusClient.Connected)
-                {
-                    try
-                    {
-                        m_modbusClient.WriteMultipleRegisters(nAddress, ival);
-                        Thread.Sleep(10);
-                    }
-                    catch (Exception e)
-                    {
-                        brepeat++;
-                        Thread.Sleep(10);
-                        if (brepeat > 10)
-                            return -1;
-                        try
-                        {
-                            m_modbusClient.Disconnect();
-                            m_modbusClient.Connect();
-                        }
-                        catch
-                        {
-                            goto RetryWrite;
-                        }
-
-                        goto RetryWrite;
-                    }
-                }
-                else
-                {
-                    //MessageBox.Show("PLC Disconnected. Please check the connection.", "Connection Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return -1;
-                }
-                return 0;
-            }
+            return WritePLCMultiRegister(slaveId, ConvertIntToUShort(address), new int[] { value });
         }
     }
 }

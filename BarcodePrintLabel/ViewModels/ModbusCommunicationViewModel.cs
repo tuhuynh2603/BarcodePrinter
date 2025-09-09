@@ -41,7 +41,7 @@ namespace BarcodePrintLabel.ViewModels
             {
                 memoryAddress = Convert.ToInt32(ModbusMemoryAddress);
                 var value = Convert.ToInt32(modbusValue);
-                _modbusCommunication.WritePLCRegister(memoryAddress, value);
+                _modbusCommunication.WritePLCRegister( 1, memoryAddress, value);
             }
             catch (Exception ex)
             {
@@ -74,7 +74,7 @@ namespace BarcodePrintLabel.ViewModels
                 memoryAddress = Convert.ToInt32(ModbusMemoryAddress);
 
                 var modbusValueTemp = "";
-                foreach ( var data in _modbusCommunication.ReadPLCMultiRegister(memoryAddress).Select(s => s.ToString()))
+                foreach ( var data in _modbusCommunication.ReadPLCMultiRegister( 1, memoryAddress).Select(s => s.ToString()))
                 {
                     modbusValueTemp += data;
                 }
@@ -163,7 +163,7 @@ namespace BarcodePrintLabel.ViewModels
             }
         }
 
-        private Visibility _isVisible = Visibility.Collapsed;
+        private Visibility _isVisible = Visibility.Visible;
 
         public Visibility IsVisible
         {
@@ -178,6 +178,22 @@ namespace BarcodePrintLabel.ViewModels
             }
         }
 
+
+        private Visibility _IsEngineerMode { get; set; } = Visibility.Collapsed;
+        public Visibility IsEngineerMode
+        {
+            get => _IsEngineerMode;
+            set
+            {
+                //if(_mainViewModel.application.IsEngineerMode == 1)
+
+                _IsEngineerMode = value;
+                OnPropertyChanged(nameof(IsEngineerMode));
+
+                //if (_mainViewModel.printerSerialCommunicationViewModel != null)
+                //    _mainViewModel.printerSerialCommunicationViewModel.OpenSerialDialog(_isOpenPrinterCommunicationDialog);
+            }
+        }
 
 
 

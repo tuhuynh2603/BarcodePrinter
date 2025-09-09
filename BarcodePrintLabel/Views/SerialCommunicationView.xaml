@@ -17,12 +17,12 @@
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1.5*"></ColumnDefinition>
-                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="auto"></ColumnDefinition>
 
             </Grid.ColumnDefinitions>
 
             <Label Grid.Column="0" Content="{Binding Comm }" Background="{Binding ConectionStatus, Converter={StaticResource BoolToBrush}}"></Label>
-            <Button Grid.Column="1" x:Name="button_PLC_Connect" Content="{Binding ConnectOrDisConnectString }" Command="{Binding ConnectOrDisConnect}"></Button>
+            <Button Grid.Column="1" x:Name="button_PLC_Connect" Content="{Binding ConnectOrDisConnectString }" Command="{Binding ConnectOrDisConnect}" Visibility="{Binding IsEngineerMode}"></Button>
         </Grid>
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
@@ -32,10 +32,10 @@
                 <ColumnDefinition Width="50"></ColumnDefinition>
 
             </Grid.ColumnDefinitions>
-            <Label Grid.Column="0" Content="Value" BorderBrush="Black" BorderThickness="1"></Label>
-            <TextBox Grid.Column="1" Text="{Binding DataResult}"></TextBox>
-            <Button  Content ="Read" Grid.Column="2" Command="{Binding ReadCommand}"></Button>
-            <Button  Content ="Write" Grid.Column="3" Command="{Binding WriteCommand}"></Button>
+            <Label Grid.Column="0" Content="Value" BorderBrush="Black" BorderThickness="1" Visibility="{Binding IsEngineerMode}"></Label>
+            <TextBox Grid.Column="1" Text="{Binding DataResult}" Visibility="{Binding IsEngineerMode}"></TextBox>
+            <Button  Content ="Read" Grid.Column="2" Command="{Binding ReadCommand}" Visibility="{Binding IsEngineerMode}"></Button>
+            <Button  Content ="Write" Grid.Column="3" Command="{Binding WriteCommand}" Visibility="{Binding IsEngineerMode}"></Button>
 
         </Grid>
     </Grid>

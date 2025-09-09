@@ -2,7 +2,7 @@
 using ClosedXML.Excel;
 using DocumentFormat.OpenXml.Drawing.Charts;
 using DocumentFormat.OpenXml.Spreadsheet;
-using OfficeOpenXml;
+using MySqlX.XDevAPI.Common;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -32,7 +32,7 @@ namespace BarcodePrintLabel.Core.Services
                         var ws = workbook.Worksheets.Add(sheetName);
 
                         // tạo header (nếu cần)
-                        AddDataToRow(ws, 1, TestResult.CreateHeaderResult());
+                        AddDataToRow(ws, 1, new TestResult());
                         
                         workbook.SaveAs(filePath);
                     }
@@ -68,7 +68,7 @@ namespace BarcodePrintLabel.Core.Services
                                 RS_VERTICAL2 = row.Cell(10).GetString(),
                                 RESULT = row.Cell(11).GetString(),
                                 ERROR_CODE = row.Cell(12).GetString(),
-                                DateTime = row.Cell(13).GetString(),
+                                DateTime = row.Cell(13).GetDateTime(),
                             });
                         }
                     }
@@ -89,7 +89,7 @@ namespace BarcodePrintLabel.Core.Services
                 var ws = workbook.Worksheets.Add(sheetName);
 
                 // Header
-                AddDataToRow(ws, 1, TestResult.CreateHeaderResult());
+                AddDataToRow(ws, 1, new TestResult());
                 // Data
                 var row = 2;
                 foreach (var r in results)
@@ -105,19 +105,21 @@ namespace BarcodePrintLabel.Core.Services
         {
             var index = 1;
 
-            ws.Cell(row, index++).Value = newResult.SerialNumber;
-            ws.Cell(row, index++).Value = newResult.QRCode;
-            ws.Cell(row, index++).Value = newResult.LS_HORIZONTAL;
-            ws.Cell(row, index++).Value = newResult.LS_VERTICAL;
-            ws.Cell(row, index++).Value = newResult.LS_HORIZONTAL2;
-            ws.Cell(row, index++).Value = newResult.LS_VERTICAL2;
-            ws.Cell(row, index++).Value = newResult.RS_HORIZONTAL;
-            ws.Cell(row, index++).Value = newResult.RS_VERTICAL;
-            ws.Cell(row, index++).Value = newResult.RS_HORIZONTAL2;
-            ws.Cell(row, index++).Value = newResult.RS_VERTICAL2;
-            ws.Cell(row, index++).Value = newResult.RESULT;
-            ws.Cell(row, index++).Value = newResult.ERROR_CODE;
-            ws.Cell(row, index++).Value = newResult.DateTime;
+            var isFirstRow = row == 1;
+
+            ws.Cell(row, index++).Value = isFirstRow ? "Serial Number" : newResult.SerialNumber;
+            ws.Cell(row, index++).Value = isFirstRow ? "QR Code" : newResult.QRCode;
+            ws.Cell(row, index++).Value = isFirstRow ? "LS_HORIZONTAL": newResult.LS_HORIZONTAL;
+            ws.Cell(row, index++).Value = isFirstRow ? "LS_VERTICAL": newResult.LS_VERTICAL;
+            ws.Cell(row, index++).Value = isFirstRow ? "LS_HORIZONTAL2" : newResult.LS_HORIZONTAL2;
+            ws.Cell(row, index++).Value = isFirstRow ? "LS_VERTICAL2" : newResult.LS_VERTICAL2;
+            ws.Cell(row, index++).Value = isFirstRow ? "RS_HORIZONTAL": newResult.RS_HORIZONTAL;
+            ws.Cell(row, index++).Value = isFirstRow ? "RS_VERTICAL":  newResult.RS_VERTICAL;
+            ws.Cell(row, index++).Value = isFirstRow ? "RS_HORIZONTAL2" : newResult.RS_HORIZONTAL2;
+            ws.Cell(row, index++).Value = isFirstRow ? "RS_VERTICAL2" : newResult.RS_VERTICAL2;
+            ws.Cell(row, index++).Value = isFirstRow ? "RESULT" : newResult.RESULT;
+            ws.Cell(row, index++).Value = isFirstRow ? "ERROR_CODE" : newResult.ERROR_CODE;
+            ws.Cell(row, index++).Value = isFirstRow ? "Date Time" : newResult.DateTime;
         }
 
         public static void AppendToExcel(string filePath, TestResult newResult)
@@ -131,7 +133,7 @@ namespace BarcodePrintLabel.Core.Services
                     var ws = workbook.Worksheets.Add(sheetName);
 
                     // Tạo header
-                    AddDataToRow(ws, 1, TestResult.CreateHeaderResult());
+                    AddDataToRow(ws, 1, new TestResult());
                     // Ghi dòng dữ liệu đầu tiên
                     AddDataToRow(ws, 2, newResult);
 

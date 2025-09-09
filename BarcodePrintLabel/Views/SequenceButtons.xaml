@@ -43,21 +43,21 @@
                 </RibbonGroup.Header>
                 <RibbonToggleButton Label="PLC-Comm"
                 IsChecked="{Binding IsOpenModbusDialog, Mode=TwoWay}"
-                                LargeImageSource="\..\Resources\network.png"
+                                LargeImageSource="\Resources\network.png"
                 MouseOverBackground="{StaticResource MouseOverButtonStyle}"
                 Foreground="GhostWhite"
                 CheckedBackground="{StaticResource CheckedButtonStyle}"
                 Width="200"/>
                 <RibbonToggleButton Label="Printer-Comm"
                 IsChecked="{Binding IsOpenPrinterCommunicationDialog, Mode=TwoWay}"
-                                LargeImageSource="\..\Resources\printer-custom.png"
+                                LargeImageSource="\Resources\printer-custom.png"
                 MouseOverBackground="{StaticResource MouseOverButtonStyle}"
                 Foreground="GhostWhite"
                 CheckedBackground="{StaticResource CheckedButtonStyle}"
                 Width="100"/>
                 <RibbonToggleButton Label="Scanner-Comm"
                 IsChecked="{Binding IsOpenScannerCommunicationDialog, Mode=TwoWay}"
-                                LargeImageSource="\..\Resources\qrcode-scan-custom.png"
+                                LargeImageSource="\Resources\qrcode-scan-custom.png"
                 MouseOverBackground="{StaticResource MouseOverButtonStyle}"
                 Foreground="GhostWhite"
                 CheckedBackground="{StaticResource CheckedButtonStyle}"
@@ -71,7 +71,7 @@
                       HorizontalAlignment="Right"
                       Command="{Binding PrintLabelCommand}"
                       Width="100" Grid.Column="1">
-                <Image Source ="\..\Resources\printer-custom.png" ></Image>
+                <Image Source ="\Resources\printer-custom.png" ></Image>
             </Button>
         </StackPanel>
     </Grid>

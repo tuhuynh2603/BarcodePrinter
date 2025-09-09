@@ -1,7 +1,9 @@
 ﻿
 using BarcodePrintLabel.Core;
 using BarcodePrintLabel.Core.Communication;
+using System;
 using System.Windows;
+using System.Windows.Media.Imaging;
 
 namespace BarcodePrintLabel.ViewModels
 {
@@ -39,6 +41,8 @@ namespace BarcodePrintLabel.ViewModels
 
         public MainViewModel()
         {
+   //         var data = new BitmapImage(
+    //new Uri("pack://application:,,,/BarcodePrintLabel;component/Resources/network.png", UriKind.Absolute));
             titleViewModel =  new TitleViewModel(this);
             application = new PrinterApplication();
             PrintResultVM = new PrintResultDataGridViewModel(this);

@@ -56,8 +56,9 @@
                   IsReadOnly="True">
 
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Serial Number" Binding="{Binding SerialNumber}" Width="*"/>
-                <DataGridTextColumn Header="QRCode" Binding="{Binding QRCode}" Width="*"/>
+                <DataGridTextColumn Header="No" Binding="{Binding Id}" Width="0.5*"/>
+                <DataGridTextColumn Header="Serial Number" Binding="{Binding SerialNumber}" Width="2*"/>
+                <DataGridTextColumn Header="QRCode" Binding="{Binding QRCode}" Width="2*"/>
                 <DataGridTextColumn Header="RS-HM" Binding="{Binding LS_HORIZONTAL}" Width="*"/>
                 <DataGridTextColumn Header="RS-VM" Binding="{Binding LS_VERTICAL}" Width="*"/>
                 <DataGridTextColumn Header="LS-HM" Binding="{Binding LS_HORIZONTAL2}" Width="*"/>
@@ -68,7 +69,7 @@
                 <DataGridTextColumn Header="LS-VM 2" Binding="{Binding RS_VERTICAL2}" Width="*"/>
                 <DataGridTextColumn Header="Overall" Binding="{Binding RESULT}" Width="*"/>
                 <DataGridTextColumn Header="Error Code" Binding="{Binding ERROR_CODE}" Width="*"/>
-                <DataGridTextColumn Header="DateTime" Binding="{Binding DateTime}" Width="*"/>
+                <DataGridTextColumn Header="DateTime" Binding="{Binding DateTime}" Width="2*"/>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

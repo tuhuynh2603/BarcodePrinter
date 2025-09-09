@@ -1,5 +1,4 @@
-﻿using Amazon.Runtime.Internal.Util;
-using BarcodePrintLabel.Views;
+﻿using BarcodePrintLabel.Views;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -20,6 +19,8 @@ namespace BarcodePrintLabel.Core
         public const string pathRegistry = "Software\\HD Company\\Printer Label Application";
         public string pathStatistics;
         public string defaultExcelFile = "data.xlsx";
+        public string sqlConnectorString = "";
+
 
         public string m_ScannerCom;
         public int m_ScannerBauRate;
@@ -27,6 +28,9 @@ namespace BarcodePrintLabel.Core
         public int m_PLCEventCount;
         public int m_DefaultScanDataLength;
         public int m_DefaultPLCResultLength;
+
+        public int numberDayKeepData = 180;
+        public int IsEngineerMode = 0;
 
 
         public int m_PrinterBauRate;
@@ -100,6 +104,12 @@ namespace BarcodePrintLabel.Core
 
             m_PLCIPAddress = GetStringRegistry("PLC IP Address", "192.168.10.1");
             int.TryParse(GetStringRegistry("PLC Port", "3000"), out m_PLCPort);
+
+            sqlConnectorString = GetStringRegistry("SQL Connection String", "server=localhost;database=HDBarCodePrinter;user=root;password=123456");
+            int.TryParse(GetStringRegistry("Number Days to keep data", "180"), out numberDayKeepData);
+            int.TryParse(GetStringRegistry("Engineer Mode", "0"), out IsEngineerMode);
+
+
 
             if (!Directory.Exists(pathStatistics))
                 Directory.CreateDirectory(pathStatistics);

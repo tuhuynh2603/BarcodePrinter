@@ -1,8 +1,13 @@
 ﻿using BarcodePrintLabel.Core;
 using BarcodePrintLabel.Core.Commands;
 using BarcodePrintLabel.Core.Services;
+using BarcodePrintLabel.Database;
+using BarcodePrintLabel.Database.Repositories;
 using BarcodePrintLabel.Models;
+using BarcodePrintLabel.Services;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Xaml.Behaviors.Core;
+using MySqlX.XDevAPI.Common;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -126,7 +131,7 @@ namespace BarcodePrintLabel.ViewModels
 
                 return result.SerialNumber?.Contains(SearchText) == true
                        || result.QRCode?.Contains(SearchText) == true
-                       || result.DateTime?.Contains(SearchText) == true;
+                       || result.DateTime.ToString().Contains(SearchText) == true;
             }
             return false;
         }
@@ -154,21 +159,64 @@ namespace BarcodePrintLabel.ViewModels
             }
         }
 
+        private readonly DatabaseContext _db;
+        ITestResultRepository repository ;
+        private readonly TestResultService _service;
 
 
-        public PrintResultDataGridViewModel( MainViewModel mainViewModel)
+        public PrintResultDataGridViewModel( MainViewModel mainViewModel )
         {
             _mainViewModel = mainViewModel;
             var path = $"{_mainViewModel.application.pathStatistics}\\{_mainViewModel.application.defaultExcelFile}";
             System.IO.Directory.CreateDirectory(_mainViewModel.application.pathStatistics);
-            var resultTemp = new List<TestResult>();
-            ExcelHelper.LoadFromExcel(path, ref resultTemp);
-            Results = new ObservableCollection<TestResult>(resultTemp);
-            ResultsDisplay = new ObservableCollection<TestResult>(resultTemp.Where(s => s.ERROR_CODE == AuToManualModeUtils.PASS_RESULT_CODE));
+            //var resultTemp = new List<TestResult>();
+
+            //ExcelHelper.LoadFromExcel(path, ref resultTemp);
+
+            _db = new DatabaseContext(_mainViewModel.application.sqlConnectorString);
+            _db.Database.EnsureCreated();
+            repository = new TestResultRepository(_db);
+            _service = new TestResultService(repository);
+
+            LoadData();
+        }
+
+        private void LoadData()
+        {
+            var data = _db.TestResults.OrderBy(r => r.DateTime).ToList();
+            DateTime oldestDate = DateTime.Now.AddDays(-_mainViewModel.application.numberDayKeepData);
+            Results = new ObservableCollection<TestResult>(data.Where(r => r.DateTime >= oldestDate).OrderBy(r => r.DateTime));
+            ResultsDisplay = new ObservableCollection<TestResult>(Results.Where(s => s.ERROR_CODE == AuToManualModeUtils.PASS_RESULT_CODE));
+            ResultsView = CollectionViewSource.GetDefaultView(ResultsDisplay);
+            ResultsView.Filter = FilterResults;
+            ResultsView.Refresh();
+
+        }
+
+        public async Task LoadDataAsync()
+        {
+            Results.Clear();
+            var results = await _service.GetResultsAsync();
+            foreach (var result in results)
+            {
+                Results.Append(result);
+            }
+
+            DateTime oldestDate = DateTime.Now.AddDays(-30);
+            Results = new ObservableCollection<TestResult>(Results.Where(r => r.DateTime >= oldestDate).OrderBy(r => r.DateTime));
+
+            ResultsDisplay = new ObservableCollection<TestResult>(Results.Where(s => s.ERROR_CODE == AuToManualModeUtils.PASS_RESULT_CODE));
             ResultsView = CollectionViewSource.GetDefaultView(ResultsDisplay);
             ResultsView.Filter = FilterResults;
             ResultsView.Refresh();
         }
+
+        public async Task AddDataToSQL( TestResult result )
+        {
+
+            await _service.AddResultAsync(result);
+        }
+
 
         private void ExportToExcel()
         {

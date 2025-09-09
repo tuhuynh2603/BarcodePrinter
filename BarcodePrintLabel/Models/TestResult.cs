@@ -23,28 +23,8 @@ namespace BarcodePrintLabel.Models
         public string RS_VERTICAL2          { get; set; }
         public string RESULT                    { get; set; } 
         public string ERROR_CODE            { get; set; } 
-        public string DateTime              { get; set; }
+        public DateTime DateTime              { get; set; }
 
-
-        public static TestResult CreateHeaderResult()
-        {
-            return new TestResult()
-            {
-                SerialNumber = "Serial Number",
-                QRCode = "QR Code",
-                LS_HORIZONTAL = "LS_HORIZONTAL",
-                LS_VERTICAL = "LS_VERTICAL",
-                LS_HORIZONTAL2 = "LS_HORIZONTAL2",
-                LS_VERTICAL2 = "LS_VERTICAL2",
-                RS_HORIZONTAL = "RS_HORIZONTAL",
-                RS_VERTICAL = "RS_VERTICAL",
-                RS_HORIZONTAL2 = "RS_HORIZONTAL2",
-                RS_VERTICAL2 = "RS_VERTICAL2",
-                RESULT = "RESULT",
-                ERROR_CODE = "ERROR_CODE",
-                DateTime = "Date Time",
-            };
-        }
     }
 
 

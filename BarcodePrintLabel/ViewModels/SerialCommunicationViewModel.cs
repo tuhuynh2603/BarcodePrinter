@@ -110,7 +110,7 @@ namespace BarcodePrintLabel.ViewModels
             }
         }
 
-        private Visibility _isVisible = Visibility.Collapsed;
+        private Visibility _isVisible = Visibility.Visible;
 
         public Visibility IsVisible
         {
@@ -124,6 +124,25 @@ namespace BarcodePrintLabel.ViewModels
                 }
             }
         }
+
+
+
+        private Visibility _IsEngineerMode { get; set; } = Visibility.Collapsed;
+        public Visibility IsEngineerMode
+        {
+            get => _IsEngineerMode;
+            set
+            {
+                //if(_mainViewModel.application.IsEngineerMode == 1)
+
+                _IsEngineerMode = value;
+                OnPropertyChanged(nameof(IsEngineerMode));
+
+                //if (_mainViewModel.printerSerialCommunicationViewModel != null)
+                //    _mainViewModel.printerSerialCommunicationViewModel.OpenSerialDialog(_isOpenPrinterCommunicationDialog);
+            }
+        }
+
 
         private string _SerialTitle = "Serial Comm";
 

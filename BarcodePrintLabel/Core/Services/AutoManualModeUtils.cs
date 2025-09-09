@@ -42,7 +42,7 @@ namespace BarcodePrintLabel.Core.Services
                 }
 
                 var scannerDataAsciiArray = scannerData.Select(c => (int)c).ToArray();
-                mainViewModel.modbusCommunication.WritePLCMultiRegister((int)PLC_ADDRESS.APP_SCAN_RESULT, scannerDataAsciiArray);
+                mainViewModel.modbusCommunication.WritePLCMultiRegister( 1, (int)PLC_ADDRESS.APP_SCAN_RESULT, scannerDataAsciiArray);
                 Thread.Sleep(2000);
             }
         }
@@ -81,7 +81,7 @@ namespace BarcodePrintLabel.Core.Services
                 RS_VERTICAL2 = dataTest[7].ToString(),
                 RESULT = dataTest[8].ToString(),
                 ERROR_CODE = dataTest[9].ToString(),
-                DateTime = now.ToString(),
+                DateTime = now,
 
             };
 
@@ -110,7 +110,7 @@ namespace BarcodePrintLabel.Core.Services
             var year = now.ToString("yy");
             var dateOfYear = now.DayOfYear.ToString("D3");
             var YearMonthDay = now.ToString();
-            var allPassDataInDate = allData.Where(s => s.ERROR_CODE == PASS_RESULT_CODE && DateTime.Parse(s.DateTime).Date == now.Date );
+            var allPassDataInDate = allData.Where(s => s.ERROR_CODE == PASS_RESULT_CODE && s.DateTime.Date == now.Date );
             var BNDataInDate = allPassDataInDate.Where(s => s.SerialNumber.Contains(BN)).Count();
             var TCDataInDate = allPassDataInDate.Where(s=> s.SerialNumber.Contains(TC)).DistinctBy(s => s.QRCode).Count();
             var sequentialNumber = (BNDataInDate + TCDataInDate + 1).ToString("D4");
