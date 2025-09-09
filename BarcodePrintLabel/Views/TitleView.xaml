@@ -1,0 +1,31 @@
+﻿<UserControl x:Class="BarcodePrintLabel.Views.TitleView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:BarcodePrintLabel.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="30">
+    <Border BorderBrush="SteelBlue" BorderThickness="1">
+        <Border.Background>
+            <LinearGradientBrush EndPoint="0.1,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,1">
+                <GradientStop Color="Black" Offset="0.1139"/>
+                <GradientStop Color="#FF352F2E"  Offset="0.8939"/>
+            </LinearGradientBrush>
+        </Border.Background>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="5*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Orientation="Horizontal" Grid.Column="0">
+                <Image  Source="\..\Resources\ICONHD.png" Width="30" Height="30"></Image>
+                <Label Content="HD Printer Barcode" FontSize="15" FontFamily="Microsoft New Tai Lue" Foreground="WhiteSmoke"></Label>
+            </StackPanel>
+            <local:CloseApplicationBar HorizontalAlignment="Right" Grid.Column="1"></local:CloseApplicationBar>
+
+        </Grid>
+
+    </Border>
+</UserControl>
