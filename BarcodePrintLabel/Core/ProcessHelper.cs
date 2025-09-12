@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,6 +22,16 @@ namespace BarcodePrintLabel.Core
             }
             else
             { return true; }
+        }
+
+        public static string GetWeekOfYear(DateTime date)
+        {
+            CultureInfo cul = CultureInfo.InvariantCulture;
+            CalendarWeekRule weekRule = cul.DateTimeFormat.CalendarWeekRule;
+            DayOfWeek firstDayOfWeek = cul.DateTimeFormat.FirstDayOfWeek;
+
+            // Lấy số tuần
+            return cul.Calendar.GetWeekOfYear(date, weekRule, firstDayOfWeek).ToString("D2");
         }
     }
 }

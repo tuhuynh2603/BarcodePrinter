@@ -17,16 +17,18 @@ namespace BarcodePrintLabel.Core.Services
 
     public static class AuToManualModeUtils
     {
-        public const string PASS_RESULT_CODE = "0";
+        public const string PASS_RESULT_CODE = "1";
         public static void DoAutoMode(MainViewModel mainViewModel)
         {
             while (true)
             {
-                while (mainViewModel.printerSerial != null && !mainViewModel.scannerSerial.m_SerialDataReceivedEvent.WaitOne(100))
+                while (mainViewModel.scannerSerial != null && !mainViewModel.scannerSerial.m_SerialDataReceivedEvent.WaitOne(100))
                 {
-                    Thread.Sleep(100);
+                   Thread.Sleep(100);
+                    if (mainViewModel.hardwareIO == null)
+                        return;
                 }
-                if (mainViewModel.printerSerial is null)
+                if (mainViewModel is null)
                     return;
 
                 var scannerData = mainViewModel.scannerSerial.ReadData();
@@ -51,8 +53,10 @@ namespace BarcodePrintLabel.Core.Services
         {
             if (ShouldPrintData(isByPass, result, isAutoMode) )
             {
-                var command = PrinterTemplate.MakePrinterTemplateCommand(result.SerialNumber);
-                printerSerial.WriteData(command);
+                //_mainViewModel.printerPreviewDialogViewModel.Print(data.SerialNumber, ProcessHelper.GetWeekOfYear(data.DateTime));
+
+                //var command = PrinterTemplate.MakePrinterTemplateCommand(result.SerialNumber);
+                //printerSerial.WriteData(command);
             }
         }
 
@@ -92,17 +96,18 @@ namespace BarcodePrintLabel.Core.Services
 
         private static string GenerateSerialNumber( IReadOnlyCollection<TestResult> allData, TestResult result, DateTime now)
         {
+            if (result.RESULT != PASS_RESULT_CODE)
+                return string.Empty;
+
             const string BN = "BN";
             const string TC = "TC";
             var qrCode = result.QRCode;
             var data = allData.Where(s => s.QRCode == qrCode);
-            if (data.Count() > 0 )
+            var dataHasSerialNumber = data.Where(s => s.RESULT == PASS_RESULT_CODE && !string.IsNullOrEmpty(s.SerialNumber)).ToList();
+            if (dataHasSerialNumber.Count() >0  )
             {
-                return data.First().SerialNumber;
+                return data.Last().SerialNumber;
             }
-
-            if (result.ERROR_CODE != PASS_RESULT_CODE)
-                return string.Empty;
 
             var manufacture = qrCode.Substring(0, 2);
             var isByPass = manufacture.Contains("BN");
@@ -110,7 +115,7 @@ namespace BarcodePrintLabel.Core.Services
             var year = now.ToString("yy");
             var dateOfYear = now.DayOfYear.ToString("D3");
             var YearMonthDay = now.ToString();
-            var allPassDataInDate = allData.Where(s => s.ERROR_CODE == PASS_RESULT_CODE && s.DateTime.Date == now.Date );
+            var allPassDataInDate = allData.Where(s => s.RESULT == PASS_RESULT_CODE && s.DateTime.Date == now.Date );
             var BNDataInDate = allPassDataInDate.Where(s => s.SerialNumber.Contains(BN)).Count();
             var TCDataInDate = allPassDataInDate.Where(s=> s.SerialNumber.Contains(TC)).DistinctBy(s => s.QRCode).Count();
             var sequentialNumber = (BNDataInDate + TCDataInDate + 1).ToString("D4");

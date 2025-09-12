@@ -47,7 +47,7 @@
                 MouseOverBackground="{StaticResource MouseOverButtonStyle}"
                 Foreground="GhostWhite"
                 CheckedBackground="{StaticResource CheckedButtonStyle}"
-                Width="200"/>
+                Width="100"/>
                 <RibbonToggleButton Label="Printer-Comm"
                 IsChecked="{Binding IsOpenPrinterCommunicationDialog, Mode=TwoWay}"
                                 LargeImageSource="\Resources\printer-custom.png"

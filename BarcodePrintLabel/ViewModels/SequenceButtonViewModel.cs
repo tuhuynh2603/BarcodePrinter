@@ -3,6 +3,7 @@ using BarcodePrintLabel.Core;
 using BarcodePrintLabel.Core.Communication;
 using BarcodePrintLabel.Core.Services;
 using BarcodePrintLabel.Models;
+using BarcodePrintLabel.Views;
 using DocumentFormat.OpenXml.Vml.Spreadsheet;
 using Microsoft.Xaml.Behaviors.Core;
 using System;
@@ -107,11 +108,13 @@ namespace BarcodePrintLabel.ViewModels
 
             if(_mainViewModel.PrintResultVM?.SelectedResult != null)
             {
-                AuToManualModeUtils.PrintLabel(_mainViewModel.printerSerial, true, _mainViewModel.PrintResultVM.SelectedResult, false);
+                var data = _mainViewModel.PrintResultVM.SelectedResult;
+                _mainViewModel.printerPreviewDialogViewModel.Print(data.SerialNumber, ProcessHelper.GetWeekOfYear(data.DateTime));
             }
             else
             {
-                AuToManualModeUtils.PrintLabel(_mainViewModel.printerSerial, true, _mainViewModel.PrintResultVM.Results.Last(), false);
+                var data = _mainViewModel.PrintResultVM.Results.Last() ;
+                _mainViewModel.printerPreviewDialogViewModel.Print(data.SerialNumber, ProcessHelper.GetWeekOfYear(data.DateTime));
             }
         }
         
@@ -121,7 +124,7 @@ namespace BarcodePrintLabel.ViewModels
             
         }
 
-        private bool _isOpenModbusDialog { get; set; }
+        private bool _isOpenModbusDialog { get; set; } = true;
         public bool IsOpenModbusDialog
         {
             get => _isOpenModbusDialog;
@@ -169,13 +172,17 @@ namespace BarcodePrintLabel.ViewModels
                     _isOpenPrinterCommunicationDialog = value;
                     OnPropertyChanged(nameof(IsOpenPrinterCommunicationDialog));
                 }
+                //if(_isOpenPrinterCommunicationDialog)
+                //    _mainViewModel.printerPreviewDialog.Visibility = Visibility.Visible;
+                //else
+                //    _mainViewModel.printerPreviewDialog.Visibility = Visibility.Collapsed;
 
                 //if (_mainViewModel.printerSerialCommunicationViewModel != null)
                 //    _mainViewModel.printerSerialCommunicationViewModel.OpenSerialDialog(_isOpenPrinterCommunicationDialog);
             }
         }
 
-        private bool _isOpenScannerCommunicationDialog { get; set; }
+        private bool _isOpenScannerCommunicationDialog { get; set; } = true;
         public bool IsOpenScannerCommunicationDialog
         {
             get => _isOpenScannerCommunicationDialog;

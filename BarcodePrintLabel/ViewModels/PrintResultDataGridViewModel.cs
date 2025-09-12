@@ -123,7 +123,7 @@ namespace BarcodePrintLabel.ViewModels
         {
             if (obj is TestResult result)
             {
-                if (result.ERROR_CODE != AuToManualModeUtils.PASS_RESULT_CODE)
+                if (result.RESULT != AuToManualModeUtils.PASS_RESULT_CODE)
                     return false;
 
                 if (string.IsNullOrEmpty(SearchText))
@@ -186,7 +186,7 @@ namespace BarcodePrintLabel.ViewModels
             var data = _db.TestResults.OrderBy(r => r.DateTime).ToList();
             DateTime oldestDate = DateTime.Now.AddDays(-_mainViewModel.application.numberDayKeepData);
             Results = new ObservableCollection<TestResult>(data.Where(r => r.DateTime >= oldestDate).OrderBy(r => r.DateTime));
-            ResultsDisplay = new ObservableCollection<TestResult>(Results.Where(s => s.ERROR_CODE == AuToManualModeUtils.PASS_RESULT_CODE));
+            ResultsDisplay = new ObservableCollection<TestResult>(Results.Where(s => s.RESULT == AuToManualModeUtils.PASS_RESULT_CODE));
             ResultsView = CollectionViewSource.GetDefaultView(ResultsDisplay);
             ResultsView.Filter = FilterResults;
             ResultsView.Refresh();
@@ -205,7 +205,7 @@ namespace BarcodePrintLabel.ViewModels
             DateTime oldestDate = DateTime.Now.AddDays(-30);
             Results = new ObservableCollection<TestResult>(Results.Where(r => r.DateTime >= oldestDate).OrderBy(r => r.DateTime));
 
-            ResultsDisplay = new ObservableCollection<TestResult>(Results.Where(s => s.ERROR_CODE == AuToManualModeUtils.PASS_RESULT_CODE));
+            ResultsDisplay = new ObservableCollection<TestResult>(Results.Where(s => s.RESULT == AuToManualModeUtils.PASS_RESULT_CODE));
             ResultsView = CollectionViewSource.GetDefaultView(ResultsDisplay);
             ResultsView.Filter = FilterResults;
             ResultsView.Refresh();

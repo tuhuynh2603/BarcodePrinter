@@ -37,14 +37,15 @@
 
                 <Grid  Grid.Column="0">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
 
                     </Grid.RowDefinitions>
-                    <views:ModbusCommunicationView DataContext="{Binding modbusCommunicationVM}" Grid.Row="0"/>
-                    <views:SerialCommunicationView DataContext="{Binding printerSerialCommunicationViewModel}" Grid.Row="1"/>
-                    <views:SerialCommunicationView DataContext="{Binding scanSerialCommunicationViewModel}" Grid.Row="2"/>
+                    <views:ModbusCommunicationView DataContext="{Binding modbusCommunicationVM}" Grid.Row="0" Margin="10"/>
+                    <views:SerialCommunicationView DataContext="{Binding scanSerialCommunicationViewModel}" Grid.Row="1"  Margin="10"/>
+
+                    <views:LabelPreviewDialog DataContext="{Binding printerPreviewDialogViewModel}" Grid.Row="2"  Margin="10"/>
 
                 </Grid>
                 <views:ResultDataGridView DataContext="{Binding PrintResultVM}" Grid.Column="1"/>

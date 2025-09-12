@@ -3,9 +3,11 @@ using BarcodePrintLabel.Core.Services;
 using BarcodePrintLabel.ViewModels;
 using ClosedXML.Excel;
 using System;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Windows;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace BarcodePrintLabel.Core
 {
@@ -59,13 +61,13 @@ namespace BarcodePrintLabel.Core
                 //ExcelHelper.AppendToExcel(path, data);
                 if (AuToManualModeUtils.ShouldPrintData(_mainViewModel.hardwareIO.IsByPass, data, _mainViewModel.hardwareIO.IsAutoMode))
                 {
-                    _mainViewModel.printerSerial.WriteData(data.SerialNumber);
+                    _mainViewModel.printerPreviewDialogViewModel.Print(data.SerialNumber, ProcessHelper.GetWeekOfYear(data.DateTime));
                 }
 
                 System.Windows.Application.Current?.Dispatcher.Invoke((Action)delegate
                 {
                     _mainViewModel.PrintResultVM.Results.Add(data);
-                    if (data.ERROR_CODE == AuToManualModeUtils.PASS_RESULT_CODE)
+                    if (data.RESULT == AuToManualModeUtils.PASS_RESULT_CODE)
                         _mainViewModel.PrintResultVM.ResultsDisplay.Add(data);
                 });
 
@@ -93,13 +95,13 @@ namespace BarcodePrintLabel.Core
                 //ExcelHelper.AppendToExcel(path, data);
                 if (AuToManualModeUtils.ShouldPrintData(_mainViewModel.hardwareIO.IsByPass, data, _mainViewModel.hardwareIO.IsAutoMode))
                 {
-                    _mainViewModel.printerSerial.WriteData(data.SerialNumber);
+                    _mainViewModel.printerPreviewDialogViewModel.Print(data.SerialNumber, ProcessHelper.GetWeekOfYear(data.DateTime));
                 }
 
                 System.Windows.Application.Current?.Dispatcher.Invoke((Action)delegate
                 {
                     _mainViewModel.PrintResultVM.Results.Add(data);
-                    if(data.ERROR_CODE == AuToManualModeUtils.PASS_RESULT_CODE)
+                    if(data.RESULT == AuToManualModeUtils.PASS_RESULT_CODE)
                         _mainViewModel.PrintResultVM.ResultsDisplay.Add(data);
                 });
 

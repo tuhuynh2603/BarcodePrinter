@@ -56,16 +56,17 @@ namespace BarcodePrintLabel.ViewModels
                                                                             if (_mainViewModel.modbusCommunication != null &&  _mainViewModel.modbusCommunication.IsConnected())
                                                                                 _mainViewModel.modbusCommunication.Disconnect();
 
-                                                                            if (_mainViewModel.printerSerial != null &&  _mainViewModel.printerSerial.IsConnected())
-                                                                                _mainViewModel.printerSerial.Disconnect();
+                                                                            if (_mainViewModel.printerPreviewDialogViewModel != null &&  _mainViewModel.printerPreviewDialogViewModel.printer.IsConnected())
+                                                                                _mainViewModel.printerPreviewDialogViewModel.printer.DisConnect();
 
                                                                             if (_mainViewModel.scannerSerial != null && _mainViewModel.scannerSerial.IsConnected())
                                                                             {
                                                                                 _mainViewModel.scannerSerial.Disconnect();
                                                                             }
-                                                                            _mainViewModel.printerSerial.m_serialPort = null;
+
+                                                                            _mainViewModel.printerPreviewDialogViewModel.printer = null;
+                                                                            _mainViewModel.printerPreviewDialogViewModel = null;
                                                                             _mainViewModel.scannerSerial.m_serialPort = null;
-                                                                            _mainViewModel.printerSerial = null;
                                                                             _mainViewModel.modbusCommunication.m_modbusClient = null;
                                                                             _mainViewModel.hardwareIO = null;
                                                                             Thread.Sleep(100);

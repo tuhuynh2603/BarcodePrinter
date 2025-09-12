@@ -13,6 +13,7 @@
 		<Version>1.0.0.0</Version>
 		<FileVersion>1.0.0.0</FileVersion>
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<ApplicationIcon>Resources\ICONHD.ico</ApplicationIcon>
 
 	</PropertyGroup>
 
@@ -63,6 +64,10 @@
 	  <None Remove="Resources\StartButton.png" />
 	  <None Remove="Resources\step-forward-custom.png" />
 	  <None Remove="Resources\StopButton.png" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Include="Resources\ICONHD.ico" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -214,6 +219,12 @@
 		<PackageReference Include="NModbus" Version="3.0.81" />
 		<PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="9.0.0" />
 		<PackageReference Include="System.IO.Ports" Version="9.0.8" />
+		<PackageReference Include="ZXing.Net" Version="0.16.10" />
+		<PackageReference Include="ZXing.Net.Bindings.Windows.Compatibility" Version="0.16.13" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Template\" />
 	</ItemGroup>
 
 </Project>

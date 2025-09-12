@@ -199,7 +199,7 @@ namespace BarcodePrintLabel.ViewModels
         {
             _serialCommunication = serial;
             SerialTitle = serial.SerialTitle;
-            Comm = _serialCommunication.GetConnectionString();
+            Comm = "Scanner: " + _serialCommunication.GetConnectionString();
             ConectionStatus = _serialCommunication.IsConnected();
             ConnectOrDisConnectString = ConectionStatus ? "Disconnect" : "Connect";
         }

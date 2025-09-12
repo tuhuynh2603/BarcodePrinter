@@ -1,6 +1,7 @@
 ﻿
 using BarcodePrintLabel.Core;
 using BarcodePrintLabel.Core.Communication;
+using BarcodePrintLabel.Views;
 using System;
 using System.Windows;
 using System.Windows.Media.Imaging;
@@ -12,13 +13,11 @@ namespace BarcodePrintLabel.ViewModels
         public PrintResultDataGridViewModel PrintResultVM { get; }
         public SequenceButtonViewModel SequenceButtonsVM { get; }
         public PrinterApplication application { get; }
-
-        public SerialCommunication printerSerial { get; set; }
         public SerialCommunication scannerSerial { get; set; }
 
         public ModbusCommunication modbusCommunication { get; set; }
         public ModbusCommunicationViewModel modbusCommunicationVM { get; set; }
-        public SerialCommunicationViewModel printerSerialCommunicationViewModel { get; set; }
+        //public SerialCommunicationViewModel printerSerialCommunicationViewModel { get; set; }
         public SerialCommunicationViewModel scanSerialCommunicationViewModel { get; set; }
         public TitleViewModel titleViewModel { get; set; }
         public HardwareIO hardwareIO { get; set; }
@@ -39,22 +38,27 @@ namespace BarcodePrintLabel.ViewModels
             }
         }
 
+
+        public LabelPreviewDialog printerPreviewDialog = new LabelPreviewDialog();
+        public LabelPreviewDialogViewModel printerPreviewDialogViewModel { get; set; }
+
         public MainViewModel()
         {
-   //         var data = new BitmapImage(
-    //new Uri("pack://application:,,,/BarcodePrintLabel;component/Resources/network.png", UriKind.Absolute));
+            //         var data = new BitmapImage(
+            //new Uri("pack://application:,,,/BarcodePrintLabel;component/Resources/network.png", UriKind.Absolute));
             titleViewModel =  new TitleViewModel(this);
             application = new PrinterApplication();
+            printerPreviewDialogViewModel = new LabelPreviewDialogViewModel(this);
+
             PrintResultVM = new PrintResultDataGridViewModel(this);
-            printerSerial = new SerialCommunication(application.m_PrinterCom, application.m_PrinterBauRate, "Printer Comm");
             scannerSerial = new SerialCommunication(application.m_ScannerCom, application.m_ScannerBauRate, "Scanner Comm");
             modbusCommunication = new ModbusCommunication(application.m_PLCIPAddress, application.m_PLCPort);
             hardwareIO = new HardwareIO(this);
             modbusCommunicationVM = new ModbusCommunicationViewModel(modbusCommunication);
-            printerSerialCommunicationViewModel = new SerialCommunicationViewModel(printerSerial);
             scanSerialCommunicationViewModel = new SerialCommunicationViewModel(scannerSerial);
             SequenceButtonsVM = new SequenceButtonViewModel(this);
             threadManager = new ThreadManager(this);
+
 
         }
 

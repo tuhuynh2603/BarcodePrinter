@@ -232,7 +232,7 @@ namespace BarcodePrintLabel.ViewModels
         public ModbusCommunicationViewModel( ModbusCommunication modbusCommunication)
         {
             _modbusCommunication = modbusCommunication;
-            ModbusIPAddress = _modbusCommunication.GetConnectionString();
+            ModbusIPAddress = "PLC Communication: " + _modbusCommunication.GetConnectionString();
             ConectionStatus = _modbusCommunication.IsConnected();
             ConnectOrDisConnectString = ConectionStatus ? "Disconnect" : "Connect";
         }

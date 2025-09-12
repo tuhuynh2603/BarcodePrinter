@@ -9,13 +9,10 @@
              AllowDrop="True" Visibility="{Binding IsVisible}">
     <Grid Background="LightGray" Width="Auto" Height="Auto">
         <Grid.RowDefinitions>
-            <RowDefinition Height="35"></RowDefinition>
-            <RowDefinition  Height="35"></RowDefinition>
             <RowDefinition  Height="35"></RowDefinition>
 
         </Grid.RowDefinitions>
-        <Label Grid.Row="0" Content="PLC Communication" BorderBrush="Black" BorderThickness="1" Background="LightSkyBlue"></Label>
-        <Grid Grid.Row="1">
+        <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="2*"></ColumnDefinition>
                 <ColumnDefinition Width="auto"></ColumnDefinition>
@@ -25,7 +22,7 @@
             <Label Grid.Column="0" Content="{Binding ModbusIPAddress }" Background="{Binding ConectionStatus, Converter={StaticResource BoolToBrush}}"></Label>
             <Button Grid.Column="1" x:Name="button_PLC_Connect" Content="{Binding ConnectOrDisConnectString }" Command="{Binding ConnectOrDisConnectToModbus}" Visibility="{Binding IsEngineerMode}"></Button>
         </Grid>
-        <Grid Grid.Row="2">
+        <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="60"></ColumnDefinition>
                 <ColumnDefinition Width="70"></ColumnDefinition>
