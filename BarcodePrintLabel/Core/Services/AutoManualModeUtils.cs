@@ -17,7 +17,7 @@ namespace BarcodePrintLabel.Core.Services
 
     public static class AuToManualModeUtils
     {
-        public const string PASS_RESULT_CODE = "1";
+        public const string PASS_RESULT_CODE = "12";
         public static void DoAutoMode(MainViewModel mainViewModel)
         {
             while (true)
@@ -62,7 +62,7 @@ namespace BarcodePrintLabel.Core.Services
 
         public static bool ShouldPrintData( bool isByPass, TestResult result, bool isAutoMode)
         {
-            return result.ERROR_CODE == "0";
+            return result.RESULT == AuToManualModeUtils.PASS_RESULT_CODE;
         }
 
         public static TestResult GetDataResult( IReadOnlyCollection<TestResult> allDataResults, int[] plcTestResult, int defaultScanDataLength)
@@ -86,7 +86,7 @@ namespace BarcodePrintLabel.Core.Services
                 RESULT = dataTest[8].ToString(),
                 ERROR_CODE = dataTest[9].ToString(),
                 DateTime = now,
-
+                CAVITY = dataTest[10].ToString(),
             };
 
             result.SerialNumber = GenerateSerialNumber( allDataResults, result, now);
@@ -109,9 +109,9 @@ namespace BarcodePrintLabel.Core.Services
                 return data.Last().SerialNumber;
             }
 
-            var manufacture = qrCode.Substring(0, 2);
-            var isByPass = manufacture.Contains("BN");
-            var testNumber = isByPass ? "1" : data.Count().ToString();// if BN => always = 1
+            var manufacture = TC;// qrCode.Substring(0, 2);
+            var isByPass = qrCode.Substring(0, 2).Contains("BN");
+            var testNumber = isByPass ? "1" : (data.Count() + 1).ToString();// if BN => always = 1
             var year = now.ToString("yy");
             var dateOfYear = now.DayOfYear.ToString("D3");
             var YearMonthDay = now.ToString();

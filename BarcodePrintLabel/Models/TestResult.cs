@@ -12,7 +12,6 @@ namespace BarcodePrintLabel.Models
 
         public string SerialNumber { get; set; }
         public string QRCode { get; set; }
-
         public string LS_HORIZONTAL             { get; set; }
         public string LS_VERTICAL           { get; set; } 
         public string LS_HORIZONTAL2            { get; set; }
@@ -24,7 +23,7 @@ namespace BarcodePrintLabel.Models
         public string RESULT                    { get; set; } 
         public string ERROR_CODE            { get; set; } 
         public DateTime DateTime              { get; set; }
-
+        public string CAVITY { get; set; }
     }
 
 

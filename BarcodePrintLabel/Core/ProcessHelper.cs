@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DocumentFormat.OpenXml.Bibliography;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -29,9 +30,9 @@ namespace BarcodePrintLabel.Core
             CultureInfo cul = CultureInfo.InvariantCulture;
             CalendarWeekRule weekRule = cul.DateTimeFormat.CalendarWeekRule;
             DayOfWeek firstDayOfWeek = cul.DateTimeFormat.FirstDayOfWeek;
-
+            var yy = date.Year.ToString().Substring(2, 2);
             // Lấy số tuần
-            return cul.Calendar.GetWeekOfYear(date, weekRule, firstDayOfWeek).ToString("D2");
+            return yy + cul.Calendar.GetWeekOfYear(date, weekRule, firstDayOfWeek).ToString("D2");
         }
     }
 }

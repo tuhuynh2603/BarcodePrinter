@@ -20,7 +20,7 @@
             </Grid.ColumnDefinitions>
             <StackPanel  Grid.Column="0"  Orientation="Horizontal" Background="LightSlateGray">
                 <Label Margin="5" FontSize="20" >Scanner Data</Label>
-                <TextBlock
+                <TextBox
                 Width="auto"
                 FontSize="20"
                 MinWidth="200"
@@ -70,6 +70,7 @@
                 <DataGridTextColumn Header="Overall" Binding="{Binding RESULT}" Width="*"/>
                 <DataGridTextColumn Header="Error Code" Binding="{Binding ERROR_CODE}" Width="*"/>
                 <DataGridTextColumn Header="DateTime" Binding="{Binding DateTime}" Width="2*"/>
+                <DataGridTextColumn Header="Cavity" Binding="{Binding CAVITY}" Width="2*"/>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

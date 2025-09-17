@@ -69,6 +69,7 @@ namespace BarcodePrintLabel.Core.Services
                                 RESULT = row.Cell(11).GetString(),
                                 ERROR_CODE = row.Cell(12).GetString(),
                                 DateTime = row.Cell(13).GetDateTime(),
+                                CAVITY = row.Cell(14).GetString()
                             });
                         }
                     }
@@ -120,6 +121,8 @@ namespace BarcodePrintLabel.Core.Services
             ws.Cell(row, index++).Value = isFirstRow ? "RESULT" : newResult.RESULT;
             ws.Cell(row, index++).Value = isFirstRow ? "ERROR_CODE" : newResult.ERROR_CODE;
             ws.Cell(row, index++).Value = isFirstRow ? "Date Time" : newResult.DateTime;
+            ws.Cell(row, index++).Value = isFirstRow ? "Cavity" : newResult.CAVITY;
+
         }
 
         public static void AppendToExcel(string filePath, TestResult newResult)

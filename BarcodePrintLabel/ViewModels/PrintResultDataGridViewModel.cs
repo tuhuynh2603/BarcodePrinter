@@ -230,6 +230,8 @@ namespace BarcodePrintLabel.ViewModels
             {
                 var visibleResults = ResultsView.Cast<TestResult>().ToList();
                 ExcelHelper.SaveToExcel(saveFileDialog.FileName, visibleResults);
+                ExcelHelper.SaveToExcel("AllData\\BackupData.xlsx", Results.ToList());
+
                 MessageBox.Show("Export successfully!", "Message",
                                 MessageBoxButton.OK, MessageBoxImage.Information);
             }
