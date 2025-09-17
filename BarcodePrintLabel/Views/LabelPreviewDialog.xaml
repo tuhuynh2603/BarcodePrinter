@@ -1,0 +1,138 @@
+﻿<UserControl  x:Class="BarcodePrintLabel.Views.LabelPreviewDialog"
+       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:local="clr-namespace:BarcodePrintLabel.Views">
+    <UserControl.Resources>
+
+        <!-- Unit Label -->
+        <DataTemplate x:Key="UnitLabelTemplate">
+            <Canvas Width="600" Height="400" Background="White">
+                <TextBlock Text="FLUSHVALVE ELECTRONIC OPERATOR"
+                   Canvas.Left="20" Canvas.Top="20" FontSize="16"/>
+                <TextBlock Text="{Binding SerialNumber}"
+                   Canvas.Left="20" Canvas.Top="60" FontSize="28" FontWeight="Bold"/>
+                <TextBlock Text="MADE IN VIETNAM"
+                   Canvas.Left="20" Canvas.Top="100" FontSize="18"/>
+                <TextBlock Text="{Binding DateCode}"
+                   Canvas.Left="20" Canvas.Top="140" FontSize="18"/>
+
+                <!-- Barcode preview -->
+                <Image Source="{Binding BarcodeImage}" StretchDirection="Both"
+               Canvas.Left="20" Canvas.Top="180"
+               Width="400" Height="80"/>
+                <TextBlock Text="{Binding SerialNumber}" 
+                   Canvas.Left="20" Canvas.Top="270" FontSize="16" />
+            </Canvas>
+        </DataTemplate>
+
+        <!-- Box Label -->
+        <DataTemplate x:Key="BoxLabelTemplate">
+            <Canvas Width="800" Height="500" Background="White">
+                <TextBlock Text="BOX LABEL" Canvas.Left="20" Canvas.Top="20" FontSize="24" FontWeight="Bold"/>
+                <TextBlock Text="{Binding Model}" Canvas.Left="20" Canvas.Top="60" FontSize="40" FontWeight="Bold"/>
+                <TextBlock Text="Product Code:" Canvas.Left="20" Canvas.Top="120" FontSize="20"/>
+                <TextBlock Text="{Binding ProductCode}" Canvas.Left="200" Canvas.Top="120" FontSize="20"/>
+                <TextBlock Text="Date:" Canvas.Left="20" Canvas.Top="160" FontSize="20"/>
+                <TextBlock Text="{Binding DateCode}" Canvas.Left="200" Canvas.Top="160" FontSize="20"/>
+                <TextBlock Text="Qty:" Canvas.Left="20" Canvas.Top="200" FontSize="20"/>
+                <TextBlock Text="{Binding Quantity}" Canvas.Left="200" Canvas.Top="200" FontSize="20"/>
+                <Rectangle Width="500" Height="80" Fill="LightGray" Canvas.Left="20" Canvas.Top="250"/>
+                <TextBlock Text="{Binding Barcode}" Canvas.Left="20" Canvas.Top="340" FontSize="18"/>
+            </Canvas>
+        </DataTemplate>
+
+        <!-- Carton Label -->
+        <DataTemplate x:Key="CartonLabelTemplate">
+            <Canvas Width="800" Height="500" Background="White">
+                <TextBlock Text="CARTON LABEL" Canvas.Left="20" Canvas.Top="20" FontSize="24" FontWeight="Bold"/>
+                <TextBlock Text="{Binding Model}" Canvas.Left="20" Canvas.Top="60" FontSize="40" FontWeight="Bold"/>
+                <TextBlock Text="Qty/Carton:" Canvas.Left="20" Canvas.Top="120" FontSize="20"/>
+                <TextBlock Text="{Binding Quantity}" Canvas.Left="200" Canvas.Top="120" FontSize="20"/>
+                <TextBlock Text="Carton #: 1/50" Canvas.Left="20" Canvas.Top="160" FontSize="20"/>
+                <Rectangle Width="500" Height="80" Fill="LightGray" Canvas.Left="20" Canvas.Top="220"/>
+                <TextBlock Text="{Binding Barcode}" Canvas.Left="20" Canvas.Top="310" FontSize="18"/>
+            </Canvas>
+        </DataTemplate>
+
+        <!-- Full Label (FX Assembly) -->
+        <DataTemplate x:Key="FullLabelTemplate">
+            <Canvas Width="800" Height="600" Background="White">
+                <Rectangle Width="120" Height="60" Fill="LightGray" Canvas.Left="40" Canvas.Top="40"/>
+                <TextBlock Text="LOGO" Canvas.Left="70" Canvas.Top="60" FontWeight="Bold"/>
+                <TextBlock Text="{Binding Model}" Canvas.Left="500" Canvas.Top="40" FontSize="48" FontWeight="Bold"/>
+                <TextBlock Text="Chrome Plate Finish" Canvas.Left="40" Canvas.Top="140"/>
+                <TextBlock Text="Battery Operated" Canvas.Left="40" Canvas.Top="180"/>
+                <TextBlock Text="Single Flush Side Mount" Canvas.Left="40" Canvas.Top="220"/>
+                <TextBlock Text="Made in Vietnam" Canvas.Left="500" Canvas.Top="140"/>
+
+                <Line X1="20" Y1="300" X2="780" Y2="300" Stroke="Black" StrokeThickness="2"/>
+                <Line X1="20" Y1="400" X2="780" Y2="400" Stroke="Black" StrokeThickness="2"/>
+                <Line X1="400" Y1="300" X2="400" Y2="400" Stroke="Black" StrokeThickness="2"/>
+
+                <TextBlock Text="Product Code" Canvas.Left="40" Canvas.Top="310" FontSize="18"/>
+                <TextBlock Text="{Binding ProductCode}" Canvas.Left="40" Canvas.Top="340" FontSize="28"/>
+                <TextBlock Text="Date" Canvas.Left="420" Canvas.Top="310" FontSize="18"/>
+                <TextBlock Text="{Binding DateCode}" Canvas.Left="420" Canvas.Top="340" FontSize="28"/>
+
+                <Rectangle Width="500" Height="80" Fill="LightGray" Canvas.Left="40" Canvas.Top="420"/>
+                <TextBlock Text="{Binding Barcode}" Canvas.Left="40" Canvas.Top="510"/>
+
+                <TextBlock Text="{Binding Quantity, StringFormat=Qty {0}}" Canvas.Left="600" Canvas.Top="520" FontSize="24" FontWeight="Bold"/>
+            </Canvas>
+        </DataTemplate>
+
+        <local:LabelTemplateSelector x:Key="LabelTemplateSelector"
+                                 UnitTemplate="{StaticResource UnitLabelTemplate}"
+                                 BoxTemplate="{StaticResource BoxLabelTemplate}"
+                                 CartonTemplate="{StaticResource CartonLabelTemplate}"
+                                 FullTemplate="{StaticResource FullLabelTemplate}"/>
+
+    </UserControl.Resources>
+
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="35"></RowDefinition>
+            <!--<RowDefinition  Height="35"></RowDefinition>
+            <RowDefinition  Height="auto"></RowDefinition>-->
+            <!--<RowDefinition  Height="auto"></RowDefinition>-->
+
+        </Grid.RowDefinitions>
+        <!--<Label Grid.Row="0"
+               Content="Printer Label"
+               BorderBrush="Black"
+               BorderThickness="1" Background="LightSkyBlue"></Label>-->
+        <Grid Grid.Row="0">
+            <Label Grid.Column="0" Content="{Binding Comm }" Background="{Binding ConectionStatus, Converter={StaticResource BoolToBrush}}"></Label>
+        </Grid>
+
+        <!--<Grid  Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0" Margin="10">
+                <TextBlock Text="Label Type"/>
+                <ComboBox ItemsSource="{Binding LabelTypes}" 
+                      SelectedItem="{Binding SelectedLabelType}" />
+
+                <TextBlock Text="Serial Number" Margin="0,10,0,0"/>
+                <TextBox Text="{Binding SerialNumber}" />
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,20,0,0">
+                    --><!--<Button Content="Preview" Command="{Binding PreviewCommand}" Width="100" Margin="5"/>--><!--
+                    <Button Content="Print" Command="{Binding PrintCommand}" Width="100" Margin="5"/>
+                </StackPanel>
+            </StackPanel>
+        </Grid>-->
+
+
+        <!-- Preview -->
+        <!--<Border Grid.Row="3" Background="White" BorderBrush="Black" BorderThickness="1" Margin="10">
+            <ContentControl Content="{Binding}" 
+                    ContentTemplateSelector="{StaticResource LabelTemplateSelector}"/>
+        </Border>-->
+
+        <!-- Form nhập -->
+
+    </Grid>
+</UserControl>
