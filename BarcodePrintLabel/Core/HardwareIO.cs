@@ -26,14 +26,45 @@ namespace BarcodePrintLabel.Core
             _modbusCommunication = _mainViewModel.modbusCommunication;
         }
 
+        private void WriteDateTimeToPLC( int startAddress)
+        {
+            var eventTimeCount = _modbusCommunication.ReadPLCRegister(1, startAddress); // Test connection  to avoid delay when read first time
+            var YMDHMS = GetDateTimeArray();
+            _modbusCommunication.WritePLCMultiRegister(1, startAddress + 1, YMDHMS);
+            _modbusCommunication.WritePLCRegister(1, startAddress, eventTimeCount + 1);
+        }
+
+        private static int[] GetDateTimeArray()
+        {
+            var YMDHMS = DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss");
+            var dateTimeArray = YMDHMS
+                .Split('-')
+                .Select(s =>
+                {
+                    int.TryParse(s, out int number);
+                    return number;
+                })
+                .ToArray();
+            return dateTimeArray;
+        }
+
         public async void ReadPLCIO()
         {
             var eventCount = _mainViewModel.application.m_PLCEventCount;
             var numberRegister = _mainViewModel.application.m_DefaultScanDataLength + _mainViewModel.application.m_DefaultPLCResultLength;
             var PLC_EVENT = (int)PLC_ADDRESS.APP_SCAN_RESULT + _mainViewModel.application.m_DefaultScanDataLength;
             var PLC_RESULT = (int)PLC_EVENT + 1;
+
+            WriteDateTimeToPLC(_mainViewModel.application.m_PLCEventTimeAddress);
             while (_mainViewModel.hardwareIO != null)
             {
+                System.Windows.Application.Current?.Dispatcher.Invoke((Action)delegate
+                {
+                    _mainViewModel.printerPreviewDialogViewModel.ConectionStatus = _mainViewModel.printerPreviewDialogViewModel.printer.IsConnected();
+                    _mainViewModel.modbusCommunicationVM.ConectionStatus = _mainViewModel.modbusCommunication.IsConnected();
+
+                });
+
                 if (_modbusCommunication?.m_modbusClient is null || !_modbusCommunication.IsConnected() )
                 {
                     Thread.Sleep(500);
@@ -71,7 +102,6 @@ namespace BarcodePrintLabel.Core
                         _mainViewModel.PrintResultVM.ResultsDisplay.Add(data);
                 });
 
-                UpdateUI();
                 Thread.Sleep(500);
             }
         }
@@ -105,18 +135,8 @@ namespace BarcodePrintLabel.Core
                         _mainViewModel.PrintResultVM.ResultsDisplay.Add(data);
                 });
 
-                UpdateUI();
                 Thread.Sleep(2000);
             }
-        }
-
-        private void UpdateUI()
-        {
-            System.Windows.Application.Current?.Dispatcher.Invoke((Action)delegate
-            {
-               _mainViewModel.SequenceButtonsVM.IsByPass = IsByPass;
-                _mainViewModel.SequenceButtonsVM.IsAutoMode = IsAutoMode;
-            });
         }
 
     }

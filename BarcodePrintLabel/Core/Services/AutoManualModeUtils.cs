@@ -24,9 +24,15 @@ namespace BarcodePrintLabel.Core.Services
             {
                 while (mainViewModel.scannerSerial != null && !mainViewModel.scannerSerial.m_SerialDataReceivedEvent.WaitOne(100))
                 {
-                   Thread.Sleep(100);
+                   Thread.Sleep(500);
                     if (mainViewModel.hardwareIO == null)
                         return;
+
+                    System.Windows.Application.Current?.Dispatcher.Invoke((Action)delegate
+                    {
+                        mainViewModel.scanSerialCommunicationViewModel.ConectionStatus = mainViewModel.scannerSerial.IsConnected();
+
+                    });
                 }
                 if (mainViewModel is null)
                     return;

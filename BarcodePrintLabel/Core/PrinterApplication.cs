@@ -29,6 +29,8 @@ namespace BarcodePrintLabel.Core
         public int m_DefaultScanDataLength;
         public int m_DefaultPLCResultLength;
 
+        public int m_PLCEventTimeAddress;
+
         public int numberDayKeepData = 180;
         public int IsEngineerMode = 0;
 
@@ -96,11 +98,11 @@ namespace BarcodePrintLabel.Core
             int.TryParse(GetStringRegistry("Printer Baurate", "9600"), out m_PrinterBauRate);
 
             int.TryParse(GetStringRegistry(PLCEventCountRegistryKey, "0"), out m_PLCEventCount);
-            int.TryParse(GetStringRegistry(PLCEventCountRegistryKey, "0"), out m_PLCEventCount);
 
             int.TryParse(GetStringRegistry("Scan Data Length", "0"), out m_DefaultScanDataLength);
             int.TryParse(GetStringRegistry("PLC Result Length", "0"), out m_DefaultPLCResultLength);
 
+            int.TryParse(GetStringRegistry("PLC Event Time Address", "45"), out m_PLCEventTimeAddress);
 
             m_PLCIPAddress = GetStringRegistry("PLC IP Address", "192.168.10.1");
             int.TryParse(GetStringRegistry("PLC Port", "3000"), out m_PLCPort);

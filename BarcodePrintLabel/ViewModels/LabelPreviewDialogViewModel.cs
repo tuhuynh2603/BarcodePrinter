@@ -128,8 +128,15 @@ namespace BarcodePrintLabel.ViewModels
 
         public void Print( string serialNumber, string weekOfYear)
         {
-            SerialNumber = serialNumber;
-            printer.PrintUnitLabel(SerialNumber, weekOfYear);
+            try
+            {
+                SerialNumber = serialNumber;
+                printer.PrintUnitLabel(SerialNumber, weekOfYear);
+            }
+            catch
+            {
+
+            }
 
             //switch (SelectedLabelType)
             //{

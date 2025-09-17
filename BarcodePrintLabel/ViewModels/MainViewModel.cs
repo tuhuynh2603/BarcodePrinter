@@ -3,6 +3,7 @@ using BarcodePrintLabel.Core;
 using BarcodePrintLabel.Core.Communication;
 using BarcodePrintLabel.Views;
 using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Media.Imaging;
 
@@ -46,7 +47,7 @@ namespace BarcodePrintLabel.ViewModels
         {
             //         var data = new BitmapImage(
             //new Uri("pack://application:,,,/BarcodePrintLabel;component/Resources/network.png", UriKind.Absolute));
-            titleViewModel =  new TitleViewModel(this);
+            titleViewModel = new TitleViewModel(this);
             application = new PrinterApplication();
             printerPreviewDialogViewModel = new LabelPreviewDialogViewModel(this);
 
@@ -58,9 +59,6 @@ namespace BarcodePrintLabel.ViewModels
             scanSerialCommunicationViewModel = new SerialCommunicationViewModel(scannerSerial);
             SequenceButtonsVM = new SequenceButtonViewModel(this);
             threadManager = new ThreadManager(this);
-
-
         }
-
     }
 }
